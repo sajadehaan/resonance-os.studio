@@ -1,0 +1,1283 @@
+---
+import MetaballButton from '../components/MetaballButton.astro';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resonance.OS — Brand Identity for Movement & Wellness</title>
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500;600;700&family=Geist+Mono:wght@400&display=swap" rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js"></script>
+
+  <style>
+    /* ── RESET ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body { background: var(--bg); font-family: var(--fu); color: var(--ink); -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    ul, ol { list-style: none; }
+    button { border: none; background: none; cursor: pointer; font: inherit; }
+
+    /* ── TOKENS ──────────────────────────────────── */
+    :root {
+      --bg:        #f9f9f9;
+      --bg-alt:    #f0eee9;
+      --ink:       #222222;
+      --ink-m:     rgba(34, 34, 34, 0.48);
+      --rule:      rgba(34, 34, 34, 0.10);
+      --accent:    #f75b1d;
+      --accent-s:  rgba(247, 91, 29, 0.07);
+      --white:     #ffffff;
+      --black:     #000000;
+
+      --fu: 'Urbanist', system-ui, sans-serif;
+      --fm: 'Geist Mono', ui-monospace, monospace;
+
+      --hp:  clamp(1.25rem, 4vw, 4rem);
+      --vp:  clamp(4rem, 8vw, 8rem);
+      --cm:  1280px;
+      --sp:  max(var(--hp), calc((100% - var(--cm)) / 2));
+      --rad:     12px;   /* outer container radius */
+      --rad-btn: 10px;   /* button + nav pill radius */
+      --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    /* ── LAYOUT ──────────────────────────────────── */
+    .s       { padding: var(--vp) var(--sp); }
+    .s--alt  { background: var(--bg-alt); }
+
+    /* ── NAV ─────────────────────────────────────── */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem var(--sp);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.625rem;
+      font-family: var(--fu); font-size: 0.9375rem; font-weight: 500;
+      letter-spacing: -0.01em; color: var(--ink);
+    }
+    .nav-logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
+
+    /* ── Metaball nav ── */
+    .nav-right { display: flex; align-items: center; gap: 1.25rem; }
+    .fl-menu { position: relative; }
+    .fl-balls { display: block; overflow: visible; pointer-events: none; }
+    .fl-labels { position: absolute; inset: 0; z-index: 1; }
+    :global(.fl-labels a) {
+      position: absolute; top: 0; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--fu); font-size: 0.8125rem; font-weight: 600;
+      color: var(--white); letter-spacing: 0.02em; text-decoration: none;
+      white-space: nowrap; user-select: none;
+      transition: opacity 0.2s ease;
+    }
+    :global(.fl-labels a:hover) { opacity: 0.7; }
+
+    /* ── LABEL ───────────────────────────────────── */
+    .lbl {
+      display: inline-block;
+      font-family: var(--fm); font-size: 0.625rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--ink-m); margin-bottom: 1.5rem;
+    }
+    .lbl--acc { color: var(--accent); }
+
+    /* ── TYPOGRAPHY ──────────────────────────────── */
+    .hero-h1 {
+      font-family: var(--fu);
+      font-size: clamp(2.5rem, 6vw, 6.5rem);
+      font-weight: 700; line-height: 1.0; letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+    .h2 {
+      font-family: var(--fu);
+      font-size: clamp(1.75rem, 3.5vw, 3.75rem);
+      font-weight: 700; line-height: 1.0; letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+    .h2--bold { font-weight: 700; }
+
+    /* ── DIAGONAL HEADLINE STACK (Mantis-style) ─── */
+    .diag-h {
+      display: flex; flex-direction: column; align-items: flex-start;
+    }
+    .diag-line { display: block; }
+    .diag-h .diag-line:nth-child(2) { padding-left: 0.45em; }
+    .diag-h .diag-line:nth-child(3) { padding-left: 0.9em; }
+    .diag-h .diag-line:nth-child(4) { padding-left: 1.35em; }
+    .body-lg {
+      font-family: var(--fu); font-size: clamp(1rem, 1.6vw, 1.25rem);
+      line-height: 1.65; color: var(--ink-m); max-width: 58ch;
+    }
+    .body {
+      font-family: var(--fu); font-size: 1.0625rem;
+      line-height: 1.65; color: var(--ink-m);
+    }
+
+    /* ── BUTTONS — SVG metaball two-piece: dark icon block + fill label ── */
+    /* ── 01 HERO ─────────────────────────────────── */
+    .s-hero { padding: 0; }
+    .hero-body {
+      padding: clamp(3rem, 6vw, 6rem) var(--sp) clamp(2rem, 3vw, 3rem);
+    }
+    .hero-eyebrow {
+      font-family: var(--fm); font-size: 0.6rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--ink-m); margin-bottom: 2rem;
+    }
+    .hero-sub {
+      font-family: var(--fu); font-size: clamp(1rem, 1.4vw, 1.15rem);
+      line-height: 1.65; color: var(--ink-m); max-width: 44ch;
+      margin-top: 1.75rem; margin-bottom: 2.25rem;
+    }
+    .hero-ctas { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+
+    /* Spline scene — full-width visual */
+    .spline-wrap {
+      width: 100%;
+      height: clamp(320px, 55vh, 680px);
+      overflow: hidden;
+      position: relative;
+    }
+    spline-viewer {
+      width: 100%;
+      height: 100%;
+      --spline-canvas-cursor: default;
+    }
+
+    /* Brand dashboard slides in below hero */
+    .vault-slide {
+      margin: clamp(2rem, 4vw, 4rem) var(--sp) 0;
+      background: var(--bg-alt); border-radius: 16px;
+      padding: clamp(1.5rem, 2.5vw, 2.5rem);
+      border: 1px solid var(--rule);
+    }
+    .vault-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.75rem;
+    }
+    .vault-ttl {
+      font-family: var(--fm); font-size: 0.58rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--ink-m);
+    }
+    .vault-badge {
+      font-family: var(--fm); font-size: 0.56rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent);
+      border: 1px solid rgba(247, 91, 29, 0.25);
+      border-radius: 4px; padding: 0.175rem 0.5rem;
+    }
+    .swatches { display: flex; gap: 0.5rem; margin-bottom: 1.75rem; }
+    .sw {
+      width: 2.25rem; height: 2.25rem; border-radius: 6px;
+      border: 1px solid var(--rule); flex-shrink: 0;
+    }
+    .vault-type { display: flex; flex-direction: column; gap: 0.375rem; margin-bottom: 1.75rem; }
+    .vt-disp {
+      font-family: var(--fu); font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-weight: 300; letter-spacing: -0.03em; color: var(--ink); line-height: 1;
+    }
+    .vt-body { font-family: var(--fu); font-size: 0.9375rem; color: var(--ink-m); line-height: 1.5; }
+    .vt-mono {
+      font-family: var(--fm); font-size: 0.56rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--ink-m);
+    }
+    .tag-card {
+      background: var(--accent-s); border-radius: 10px;
+      padding: 1.25rem 1.375rem; position: relative;
+      border: 1px solid rgba(247, 91, 29, 0.12);
+    }
+    .tag-rec {
+      position: absolute; top: 0.875rem; right: 0.875rem;
+      font-family: var(--fm); font-size: 0.56rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent);
+    }
+    .tag-q {
+      font-family: var(--fu); font-size: 1.0625rem; font-weight: 500;
+      color: var(--ink); line-height: 1.3; max-width: 22ch; margin-bottom: 0.375rem;
+    }
+    .tag-why { font-family: var(--fu); font-size: 0.8125rem; color: var(--ink-m); }
+
+    /* ── LOGO SEPARATOR ──────────────────────────── */
+    .logo-sep {
+      display: flex; align-items: center; justify-content: center;
+      padding: clamp(3rem, 6vw, 6rem) 0;
+    }
+    .logo-sep-mark {
+      width: clamp(48px, 6vw, 80px);
+      height: clamp(48px, 6vw, 80px);
+      animation: logo-breathe 5s ease-in-out infinite;
+      opacity: 0.18;
+    }
+    @keyframes logo-breathe {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.18; }
+      50%       { transform: scale(1.08) rotate(4deg); opacity: 0.28; }
+    }
+
+    /* ── 02 THE GAP ──────────────────────────────── */
+    .gap-h2 { max-width: 22ch; margin-bottom: 2rem; }
+    .gap-body { max-width: 64ch; }
+
+    /* ── 03 WHY — FLOEMA EDITORIAL LIST ─────────── */
+    .editorial-list { margin-top: 3rem; }
+    .editorial-item {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr;
+      gap: 0 2.5rem;
+      padding: 2.75rem 0;
+      border-top: 1px solid var(--rule);
+    }
+    .editorial-item:last-child { border-bottom: 1px solid var(--rule); }
+    .editorial-n {
+      font-family: var(--fm); font-size: 0.6rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent); padding-top: 0.55rem;
+    }
+    .editorial-body {}
+    .editorial-h {
+      font-family: var(--fu);
+      font-size: clamp(1.25rem, 2.2vw, 2.25rem);
+      font-weight: 700; line-height: 1.0; letter-spacing: -0.04em;
+      color: var(--ink); margin-bottom: 0.875rem;
+    }
+    .editorial-p {
+      font-family: var(--fu); font-size: 1rem;
+      line-height: 1.65; color: var(--ink-m); max-width: 56ch;
+    }
+
+    /* ── 04 RESONANCE.ID ─────────────────────────── */
+    .prod-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 4vw, 5rem); align-items: start; margin-top: 2.5rem;
+    }
+    .mod-list { display: flex; flex-direction: column; gap: 0.5rem; margin: 1.5rem 0 2rem; }
+    .mod-item {
+      display: flex; align-items: baseline; gap: 0.75rem;
+      font-family: var(--fu); font-size: 0.9375rem;
+      line-height: 1.55; color: var(--ink-m);
+    }
+    .mod-n { font-family: var(--fm); font-size: 0.6rem; color: var(--accent); flex-shrink: 0; }
+    .price-note { font-family: var(--fu); font-size: 0.875rem; color: var(--ink-m); margin-bottom: 1.5rem; }
+
+    /* Vault full preview (ID section visual) */
+    .vault-preview {
+      background: var(--bg-alt); border-radius: 16px;
+      padding: clamp(1.5rem, 2.5vw, 2.5rem);
+      border: 1px solid var(--rule);
+    }
+
+    /* ── 05 RESONANCE.SITE ───────────────────────── */
+    .browser {
+      background: var(--bg-alt); border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--rule);
+    }
+    .browser-bar {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1rem; background: rgba(34,34,34,0.04);
+      border-bottom: 1px solid var(--rule);
+    }
+    .b-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--rule); }
+    .b-url {
+      flex: 1; background: var(--bg); border-radius: 4px;
+      padding: 0.25rem 0.75rem; font-family: var(--fm);
+      font-size: 0.56rem; color: var(--ink-m); letter-spacing: 0.04em;
+    }
+    .browser-body { padding: 2rem 1.75rem; }
+    .b-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; }
+    .b-logo { font-family: var(--fu); font-size: 0.75rem; font-weight: 500; color: var(--ink); }
+    .b-links { display: flex; gap: 1rem; }
+    .b-link { width: 2.5rem; height: 0.3rem; background: var(--rule); border-radius: 2px; }
+    .b-h {
+      font-family: var(--fu); font-size: 1.25rem; font-weight: 300;
+      letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; margin-bottom: 0.75rem;
+    }
+    .b-line { height: 0.3rem; background: var(--rule); border-radius: 2px; margin-bottom: 0.3rem; }
+    .b-line--s { width: 62%; }
+    .b-cta {
+      display: inline-block; background: var(--accent); border-radius: var(--rad);
+      padding: 0.35rem 0.875rem; font-family: var(--fu);
+      font-size: 0.6rem; font-weight: 600; color: var(--white); margin-top: 0.875rem;
+    }
+
+    /* ── 06 HOW IT WORKS ─────────────────────────── */
+    .steps {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0; margin-top: 2.5rem;
+    }
+    .step { padding: 2.5rem 2rem 2.5rem 0; border-top: 1px solid var(--rule); }
+    .step + .step { padding-left: 2rem; border-left: 1px solid var(--rule); }
+    .step-n {
+      display: block; font-family: var(--fu); font-size: 3.5rem;
+      font-weight: 200; color: var(--accent);
+      letter-spacing: -0.04em; line-height: 1; margin-bottom: 1.5rem;
+    }
+    .step-h {
+      font-family: var(--fu); font-size: 1.0625rem; font-weight: 600;
+      color: var(--ink); letter-spacing: -0.01em; margin-bottom: 0.75rem;
+    }
+    .step-p { font-family: var(--fu); font-size: 0.9375rem; color: var(--ink-m); line-height: 1.65; }
+
+    /* ── 07 WHO IT'S FOR ─────────────────────────── */
+    .who-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 2.5rem; }
+    .who-col-ttl {
+      font-family: var(--fu); font-size: 0.875rem; font-weight: 600;
+      letter-spacing: 0.01em; color: var(--ink); margin-bottom: 1.5rem;
+    }
+    .who-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .who-item {
+      display: flex; align-items: flex-start; gap: 0.625rem;
+      font-family: var(--fu); font-size: 0.9375rem;
+      line-height: 1.5; color: var(--ink-m);
+    }
+    .who-dot { color: var(--accent); flex-shrink: 0; font-size: 0.5rem; line-height: 2; }
+
+    /* ── 08 PROJECTS — FLOEMA LIST ───────────────── */
+    .project-list { margin-top: 2rem; }
+    .project-row {
+      display: grid; grid-template-columns: 3rem 1fr auto;
+      gap: 0 2rem; align-items: center;
+      padding: 1.875rem 0; border-top: 1px solid var(--rule);
+      transition: opacity 200ms;
+    }
+    .project-row:last-child { border-bottom: 1px solid var(--rule); }
+    .project-row:hover { opacity: 0.7; }
+    .project-num {
+      font-family: var(--fm); font-size: 0.6rem;
+      letter-spacing: 0.08em; color: var(--ink-m);
+    }
+    .project-name {
+      font-family: var(--fu);
+      font-size: clamp(1.5rem, 3vw, 2.75rem);
+      font-weight: 300; letter-spacing: -0.025em;
+      color: var(--ink); line-height: 1;
+    }
+    .project-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.375rem; }
+    .project-badge {
+      font-family: var(--fm); font-size: 0.56rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent);
+      border: 1px solid rgba(247, 91, 29, 0.25);
+      border-radius: 4px; padding: 0.175rem 0.5rem;
+    }
+    .project-loc { font-family: var(--fu); font-size: 0.875rem; color: var(--ink-m); }
+    .project-row--ph { opacity: 0.35; pointer-events: none; }
+    .project-row--ph:hover { opacity: 0.35; }
+
+    /* ── 09 SAMPLE ───────────────────────────────── */
+    .vault-full {
+      background: var(--bg-alt); border-radius: 16px;
+      padding: clamp(1.75rem, 3vw, 3rem); border: 1px solid var(--rule);
+      margin-top: 2.5rem;
+    }
+    .vault-full-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    }
+    .vault-full-ttl {
+      font-family: var(--fm); font-size: 0.58rem; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--ink-m);
+    }
+    .vault-modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; }
+    .vmod {
+      background: var(--bg); border-radius: 10px;
+      padding: 1.25rem 1.375rem; border: 1px solid var(--rule);
+    }
+    .vmod--acc { background: var(--accent-s); border-color: rgba(247, 91, 29, 0.12); }
+    .vmod-n {
+      font-family: var(--fm); font-size: 0.56rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.4rem;
+    }
+    .vmod-ttl {
+      font-family: var(--fu); font-size: 0.9375rem; font-weight: 600;
+      color: var(--ink); letter-spacing: -0.01em; margin-bottom: 0.25rem;
+    }
+    .vmod-sub { font-family: var(--fu); font-size: 0.8125rem; color: var(--ink-m); line-height: 1.5; }
+
+    /* ── 10 STUDIO ───────────────────────────────── */
+    .studio-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 4rem; align-items: start; margin-top: 2rem; }
+    .studio-copy { display: flex; flex-direction: column; gap: 1.25rem; }
+    .studio-av {
+      background: var(--bg-alt); border-radius: 16px; aspect-ratio: 3/4;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--rule);
+    }
+    .studio-av-lbl {
+      font-family: var(--fm); font-size: 0.58rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--ink-m); opacity: 0.4;
+    }
+
+    /* ── 11 CONVERSATIONS ────────────────────────── */
+    .conv-track-wrap {
+      margin-top: 2rem;
+      margin-inline: calc(-1 * var(--sp));
+      padding-bottom: var(--vp); overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      mask-image:         linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+    .conv-track { display: flex; width: max-content; animation: conv-scroll 52s linear infinite; }
+    .conv-track-wrap:hover .conv-track { animation-play-state: paused; }
+    .conv-set { display: flex; gap: 1rem; padding-right: 1rem; }
+    @keyframes conv-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .conv-card {
+      width: clamp(300px, 32vw, 420px); flex-shrink: 0;
+      background: var(--bg-alt); border: 1px solid var(--rule);
+      border-radius: 16px; padding: 1.75rem;
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .conv-card-who {
+      font-family: var(--fm); font-size: 0.6rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--ink-m);
+    }
+    .conv-thread { display: flex; flex-direction: column; gap: 0.625rem; }
+    .conv-bubble {
+      align-self: flex-start; background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 2px 14px 14px 14px;
+      padding: 1rem 1.25rem;
+      font-family: var(--fu); font-size: 0.9375rem;
+      color: var(--ink); line-height: 1.6; max-width: 92%;
+    }
+    .conv-reply {
+      align-self: flex-end;
+      background: var(--accent-s);
+      border: 1px solid rgba(247, 91, 29, 0.15);
+      border-radius: 14px 2px 14px 14px;
+      padding: 0.875rem 1.125rem;
+      display: flex; flex-direction: column; gap: 0.3rem; max-width: 90%;
+    }
+    .conv-reply-who {
+      font-family: var(--fm); font-size: 0.58rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--accent); margin-bottom: 0.15rem;
+    }
+    .conv-line { font-family: var(--fu); font-size: 0.875rem; color: var(--ink-m); line-height: 1.55; }
+    .conv-line::before { content: '· '; color: var(--accent); }
+
+    /* ── 12 FAQ ──────────────────────────────────── */
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4rem; margin-top: 2rem; align-items: start; }
+    .faq-col { display: flex; flex-direction: column; }
+    .faq-item { border-top: 1px solid var(--rule); }
+    .faq-item:last-child { border-bottom: 1px solid var(--rule); }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; padding: 1.125rem 0; cursor: pointer; list-style: none;
+      font-family: var(--fu); font-size: 0.9375rem; font-weight: 600;
+      color: var(--ink); line-height: 1.4;
+    }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-icon {
+      width: 1.125rem; height: 1.125rem; flex-shrink: 0;
+      color: var(--ink-m); transition: transform 200ms ease-out;
+    }
+    .faq-item[open] .faq-icon { transform: rotate(45deg); }
+    .faq-a {
+      font-family: var(--fu); font-size: 0.9375rem; color: var(--ink-m);
+      line-height: 1.65; padding-bottom: 1.125rem; max-width: 44ch;
+    }
+
+    /* ── SLASH SEPARATOR (Mantis-style) ──────────── */
+    .slash-sep {
+      padding: 0.5rem var(--sp); overflow: hidden;
+      font-family: var(--fm); font-size: 0.55rem;
+      letter-spacing: 0.06em; color: rgba(34, 34, 34, 0.18);
+      white-space: nowrap; user-select: none;
+    }
+
+    /* ── 13 FOOTER ───────────────────────────────── */
+    .s-footer { padding: var(--vp) var(--sp); }
+    .footer-cta { padding-bottom: var(--vp); margin-bottom: var(--vp); border-bottom: 1px solid var(--rule); }
+    .footer-big {
+      font-family: var(--fu);
+      font-size: clamp(2.75rem, 7vw, 8rem);
+      font-weight: 700; line-height: 1.0; letter-spacing: -0.04em;
+      color: var(--ink); margin-bottom: 1.5rem;
+    }
+    .footer-sub {
+      font-family: var(--fu); font-size: 1.0625rem; color: var(--ink-m);
+      max-width: 38ch; line-height: 1.6; margin-bottom: 2rem;
+    }
+    .footer-btns { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .footer-bar { display: grid; grid-template-columns: 1fr auto auto; gap: 2rem; align-items: start; }
+    .footer-brand { display: flex; align-items: center; gap: 0.625rem; }
+    .footer-brand-text { display: flex; flex-direction: column; gap: 0.2rem; }
+    .footer-logo { font-family: var(--fu); font-size: 0.9375rem; font-weight: 500; color: var(--ink); }
+    .footer-tag { font-family: var(--fu); font-size: 0.875rem; color: var(--ink-m); }
+    .footer-links { display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-links a {
+      font-family: var(--fu); font-size: 0.875rem;
+      color: var(--ink-m); transition: color 180ms;
+    }
+    .footer-links a:hover { color: var(--ink); }
+    .footer-right { display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-contact {
+      font-family: var(--fu); font-size: 0.875rem;
+      color: var(--ink-m); transition: color 180ms;
+    }
+    .footer-contact:hover { color: var(--ink); }
+
+    /* ── REVEAL ──────────────────────────────────── */
+    .r {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .r.v { opacity: 1; transform: none; }
+    .r[data-d="1"] { transition-delay:  80ms; }
+    .r[data-d="2"] { transition-delay: 160ms; }
+    .r[data-d="3"] { transition-delay: 240ms; }
+    .r[data-d="4"] { transition-delay: 320ms; }
+    .r[data-d="5"] { transition-delay: 400ms; }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 960px) {
+      .prod-grid    { grid-template-columns: 1fr; }
+      .steps        { grid-template-columns: 1fr; }
+      .step + .step { border-left: none; padding-left: 0; border-top: 1px solid var(--rule); }
+      .who-grid     { grid-template-columns: 1fr; gap: 2rem; }
+      .studio-grid  { grid-template-columns: 1fr; }
+      .faq-grid     { grid-template-columns: 1fr; gap: 0; }
+      .footer-bar   { grid-template-columns: 1fr; gap: 1.5rem; }
+      .editorial-item { grid-template-columns: 2rem 1fr; gap: 0 1.5rem; }
+    }
+    @media (max-width: 640px) {
+      .fl-menu { display: none; }
+      .project-row { grid-template-columns: 2rem 1fr; }
+      .project-meta { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .r { opacity: 1; transform: none; transition: none; }
+      .logo-sep-mark { animation: none; opacity: 0.15; }
+      .conv-track { animation: none; }
+      .faq-icon { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Reusable logo mark — referenced by all separators and footer icon -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <symbol id="logo-mark" viewBox="0 0 550 550">
+      <path d="M285.198 35C297.077 37.1823 309.206 51.6495 314.695 70.7247C319.229 86.4799 320.074 106.964 317.063 123.876C312.899 147.271 304.214 157.484 292.49 168.02C298.006 178.338 300.176 185.993 302.408 199.501C308.975 195.721 316.233 185.991 320.499 176.439C328.074 159.477 330.936 137.369 329.387 116.019C327.347 87.8998 317.862 57.1411 305.33 39.6565C320.828 49.3777 338.323 68.6099 343.686 97.9016C347.332 117.815 345.958 140.191 340.526 158.755C332.583 185.906 318.878 199.136 303.059 208.097C302.908 219.565 301.172 226.157 298.133 236.038C303.433 235.02 309.064 232.631 314.194 230.142C328.577 223.163 342.427 214.412 352.703 194.228C360.925 178.117 365.138 156.769 364.382 135.04C363.578 109.524 355.613 85.7229 345.017 68.9869C353.927 76.7989 361.846 87.7709 368.287 101.229C379.247 124.554 382.672 146.187 375.808 174.959C373.488 184.886 370.078 193.888 365.778 201.434C353.635 222.746 332.627 235.152 316.202 240.551C312.548 241.76 308.872 242.741 305.18 243.495C301.637 244.264 297.983 244.861 294.478 246.039C287.117 248.514 281.471 257.875 280.76 271.52C293.225 271.296 306.769 270.122 319.113 268.292C336.262 265.562 353.4 261.924 368.763 247.215C387.463 229.313 395.094 199.622 389.693 163.16C387.796 150.351 385.394 138.828 381.849 127.206C382.626 128.724 383.376 130.281 384.101 131.878C394.128 154.217 401.8 190.861 399.529 219.274C397.363 246.385 391.556 257.454 380.328 273.409C383.494 278.751 386.766 282.9 389.7 288.858C395.821 301.285 399.388 317.728 399.921 334.181C400.942 365.655 391.897 401.833 380.471 425.227C380.632 423.882 383.78 414.816 384.426 412.385C385.491 408.73 386.13 404.634 387.002 400.869C393.915 371.022 393.906 338.335 379.665 315.024C362.281 286.571 337.202 282.702 314.714 279.762C303.572 278.304 291.798 277.297 280.621 277.605C283.129 300.125 292.749 302.878 303.625 304.37C308.546 305.045 313.979 306.918 318.865 308.465C347.195 317.265 383.837 352.497 378.176 412.971C375.263 444.085 358.944 463.742 345.291 479.441C346.857 476.328 348.547 473.501 350.094 470.213C356.532 456.524 360.946 442.52 362.977 424.863C365.33 404.403 363.631 382.309 357.029 364.744C347.214 338.634 330.129 325.316 313.653 317.461C308.519 315.013 302.855 313.189 297.628 311.32C301.622 323.062 302.979 327.399 303.385 341.107C309.608 343.717 315.582 347.936 321.118 353.631C332.404 365.306 340.606 384.522 343.902 407.011C346.681 426.289 345.197 447.38 339.68 464.807C333.38 484.706 318.313 502.313 305.95 507.877C327.382 476.361 338.31 417.695 321.106 374.071C316.738 362.996 310.198 353.703 303.118 348.659C300.487 364.987 299.221 368.101 292.791 380.294C296.012 382.802 299.033 385.227 301.887 388.976C310.57 400.403 316.364 417.48 318.005 436.484C320.697 468.853 312.165 496.887 295.002 509.53C290.706 512.694 286.588 513.805 282.042 515C294.802 505.962 303.339 494.473 307.673 470.25C315.272 427.783 295.66 384.431 270.549 390.927C261.329 393.332 253.043 402.252 247.562 415.671C242.158 429.09 239.985 445.792 241.525 462.074C243.345 481.863 249.306 495.272 258.242 506.596C261.056 509.801 263.705 511.942 266.701 514.498C263.974 514.018 261.282 513.026 258.672 511.537C226.279 493.383 222.927 421.83 249.226 387.849C251.646 384.722 254.517 382.248 257.177 379.793C251.21 369.609 249.506 362.617 247.237 348.533C239.477 354.963 234.11 361.757 228.651 373.882C222.04 388.566 218.737 409.864 219.943 428.541C221.993 460.125 230.945 489.001 244.862 508.921C238.607 504.623 234.921 503 228.828 496.622C217.747 485.021 209.724 468.732 206.432 446.326C203.286 424.781 205.147 401.889 211.593 382.816C219.416 359.147 232.449 347.657 246.782 341.061C246.823 329.253 248.745 320.825 252.417 311.164C233.185 317.747 212.824 326.201 198.298 352.025C190.456 365.966 185.296 388.063 185.753 407.866C186.449 437.995 193.754 458.314 205.501 478.213C195.971 469.152 182.301 450.638 176.336 434.445C171.502 421.322 169.985 401.43 171.991 386.016C178.687 334.566 210.033 313.642 236.154 306.879C239.171 306.09 242.197 305.418 245.231 304.86C257.037 302.713 266.636 302.07 269.521 277.347C244.932 278.598 202.409 279.24 181.574 301.503C171.694 312.06 163.447 327.426 160.63 347.801C157.066 373.576 161.935 399.222 169.418 421.165C154.385 394.774 145.135 347.261 153.047 311.427C156.577 295.439 163.142 284.207 170.659 274.15C169.413 272.546 168.182 270.906 166.966 269.23C157.432 255.987 151.797 239.851 150.279 218.294C148.277 189.848 157.378 151.644 167.15 129.395C159.332 163.49 153.306 199.417 169.362 230.184C178.394 247.49 188.233 254.134 200.682 259.74C223.473 270.004 246.283 269.767 269.523 271.484C268.166 257.152 262.406 247.218 254.202 245.461C251.981 244.985 249.733 244.608 247.512 244.121C243.493 243.234 239.481 242.276 235.473 241.246C213.074 235.255 187.159 218.493 175.74 180.842C171.366 166.419 169.091 147.138 171.993 131.225C175.626 111.305 183.387 95.3401 192.751 83.0688C196.289 78.3978 199.497 74.1691 203.444 70.5434C193.928 86.8417 187.822 108.439 186.138 131.759C185.307 143.859 185.846 155.59 188.025 167.147C196.766 213.513 227.847 231.056 252.4 236.222C248.615 224.978 247.938 221.514 247.289 208.349C243.959 206.726 240.702 204.665 237.544 202.182C225.226 192.494 212.704 175.145 207.796 152.219C203.497 131.999 203.86 109.572 208.806 89.8264C214.991 65.3028 230.03 49.4998 243.694 40.2709C224.275 70.6913 212.605 123.846 225.989 167.362C230.237 181.176 239.232 195.538 247.891 199.793C249.92 185.232 252.492 178.459 258.28 168.052C253.4 164.195 250.015 161.552 245.769 155.537C237.85 144.422 232.787 128.082 231.73 110.225C230.598 92.0656 233.288 73.7641 239.755 59.4607C245.903 45.7952 254.892 37.1337 264.679 35.443C248.433 48.6025 237.476 80.241 242.148 112.172C249.782 164.35 288.753 175.754 304.47 127.846C309.03 113.66 310.246 96.8351 307.852 81.0565C305.608 65.7655 300.207 52.6629 293.047 43.3498C290.631 40.2072 287.794 37.7307 285.198 35Z" fill="#222222"/>
+      <path d="M274.452 50.0306C282.73 49.1226 289.687 68.5189 289.99 93.3541C290.293 118.189 283.828 139.059 275.549 139.969C267.27 140.879 260.313 121.483 260.01 96.6459C259.707 71.8094 266.173 50.9386 274.452 50.0306Z" fill="#f75b1d"/>
+      <path d="M274.452 410.031C282.73 409.123 289.687 428.519 289.99 453.354C290.293 478.189 283.828 499.059 275.549 499.969C267.27 500.879 260.313 481.483 260.01 456.646C259.707 431.809 266.173 410.939 274.452 410.031Z" fill="#f75b1d"/>
+    </symbol>
+
+  </defs>
+</svg>
+
+<!-- ── NAV ──────────────────────────────────────── -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg class="nav-logo-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <use href="#logo-mark"/>
+    </svg>
+    Resonance.OS
+  </a>
+  <div class="nav-right">
+    <div class="fl-menu" id="flMenu">
+      <svg class="fl-balls" id="flBalls" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="fl-labels" id="flLabels"></div>
+    </div>
+    <MetaballButton href="#footer" label="Get in touch" />
+  </div>
+</nav>
+
+
+<!-- ── 01 HERO ───────────────────────────────────── -->
+<section class="s-hero">
+
+  <div class="hero-body">
+    <p class="hero-eyebrow r">// RESONANCE.OS — BRAND IDENTITY FOR MOVEMENT &amp; WELLNESS</p>
+    <h1 class="hero-h1 diag-h">
+      <span class="diag-line">Clients meet you</span>
+      <span class="diag-line">in person.</span>
+      <span class="diag-line">They don't recognize</span>
+      <span class="diag-line">you online.</span>
+    </h1>
+    <p class="hero-sub r" data-d="1">A brand identity studio for boutique movement and wellness operators. We close the gap between who you are when you teach and how you come across on a screen.</p>
+    <div class="hero-ctas r" data-d="2">
+      <MetaballButton href="#id" label="Start your ID — €247" />
+      <MetaballButton href="#site" variant="ghost" label="Talk about Resonance.SITE" />
+    </div>
+  </div>
+
+  <!-- Spline logo animation — Mantis wire-figure equivalent -->
+  <div class="spline-wrap">
+    <spline-viewer url="https://prod.spline.design/SSUb1QPOv-tdYAa2/scene.splinecode" loading="lazy"></spline-viewer>
+  </div>
+
+  <!-- Brand dashboard slides in below -->
+  <div class="vault-slide r" data-d="3" style="margin-bottom: var(--vp);">
+    <div class="vault-hd">
+      <span class="vault-ttl">Resonance.ID — Brand System Preview</span>
+      <span class="vault-badge">Live</span>
+    </div>
+    <div class="swatches">
+      <div class="sw" style="background:#f9f9f9"></div>
+      <div class="sw" style="background:#f0eee9"></div>
+      <div class="sw" style="background:#d4cfc9"></div>
+      <div class="sw" style="background:#f75b1d"></div>
+      <div class="sw" style="background:#222222"></div>
+    </div>
+    <div class="vault-type">
+      <span class="vt-disp">Brand Identity</span>
+      <span class="vt-body">Clear, warm, unhurried — built to feel like your space.</span>
+      <span class="vt-mono">// RESONANCE.OS · IDENTITY SYSTEM · V3</span>
+    </div>
+    <div class="tag-card">
+      <span class="tag-rec">Recommended</span>
+      <p class="tag-q">"Where your body finds its frequency."</p>
+      <p class="tag-why">why this one — fits both studio and product narratives</p>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ── LOGO SEPARATOR ────────────────────────────── -->
+<div class="logo-sep" aria-hidden="true">
+  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <use href="#logo-mark"/>
+  </svg>
+</div>
+
+
+<!-- ── 02 THE GAP ──────────────────────────────────── -->
+<section class="s" id="gap">
+  <span class="lbl r">// THE GAP</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">The room you hold</span>
+    <span class="diag-line">doesn't survive</span>
+    <span class="diag-line">the trip to your website.</span>
+  </h2>
+  <p class="body-lg gap-body r" data-d="2">The brand lives in how you teach, what you notice, the way you set up a room. It lives in your voice on a Sunday morning when you talk about it. Your Instagram already carries some of it — it looks five times better than your website, and you know it. The website is the version you wrote in an evening, between sessions, on a template that wasn't built for you. That's the gap. We rebuild the website from the brand — not the other way around.</p>
+</section>
+
+
+<!-- ── LOGO SEPARATOR ────────────────────────────── -->
+<div class="logo-sep" aria-hidden="true">
+  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <use href="#logo-mark"/>
+  </svg>
+</div>
+
+
+<!-- ── 03 WHY — FLOEMA EDITORIAL LIST ─────────────── -->
+<section class="s" id="why">
+  <span class="lbl r">// A DIFFERENT KIND OF STUDIO</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">Three reasons</span>
+    <span class="diag-line">we're not the agency</span>
+    <span class="diag-line">you've been quoted by.</span>
+  </h2>
+
+  <div class="editorial-list">
+    <div class="editorial-item r" data-d="1">
+      <span class="editorial-n">01</span>
+      <div class="editorial-body">
+        <p class="editorial-h diag-h">
+          <span class="diag-line">Built around recognition,</span>
+          <span class="diag-line">not deliverables.</span>
+        </p>
+        <p class="editorial-p">Most studios sell you a logo, a palette, and a 40-page guide. We sell the moment you read your own brand back and think <em style="font-style:normal;color:var(--ink)">yes, that's me</em>. The palette, the tagline, the website — those are just the proof.</p>
+      </div>
+    </div>
+    <div class="editorial-item r" data-d="2">
+      <span class="editorial-n">02</span>
+      <div class="editorial-body">
+        <p class="editorial-h diag-h">
+          <span class="diag-line">Built to be</span>
+          <span class="diag-line">useful in 30 seconds.</span>
+        </p>
+        <p class="editorial-p">Discovery, workshops, presentations, revisions. Most agencies use the same six weeks we use to deliver the entire Resonance.ID. You answer 12 questions. Your dashboard is generated. You read it the same evening.</p>
+      </div>
+    </div>
+    <div class="editorial-item r" data-d="3">
+      <span class="editorial-n">03</span>
+      <div class="editorial-body">
+        <p class="editorial-h diag-h">
+          <span class="diag-line">Built for one</span>
+          <span class="diag-line">specific market.</span>
+        </p>
+        <p class="editorial-p">We do not work with fintech founders. We do not work with B2B SaaS. We work with people who teach movement. The intake is tuned for it. The voice rules are tuned for it. The blueprint is tuned for it. That's why it lands.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── LOGO SEPARATOR ────────────────────────────── -->
+<div class="logo-sep" aria-hidden="true">
+  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <use href="#logo-mark"/>
+  </svg>
+</div>
+
+
+<!-- ── 04 RESONANCE.ID ─────────────────────────────── -->
+<section class="s" id="id">
+  <span class="lbl r">// RESONANCE.ID</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">Your brand,</span>
+    <span class="diag-line">in one dashboard.</span>
+  </h2>
+
+  <div class="prod-grid">
+    <div class="r" data-d="2">
+      <p class="body" style="margin-bottom:1.25rem">Resonance.ID is a complete brand identity, delivered as a personal, password-protected dashboard. Seven modules — written from your intake answers, set in your typography, painted in your palette.</p>
+      <ol class="mod-list">
+        <li class="mod-item"><span class="mod-n">01 ·</span> Who you are — written back to you, in your own words</li>
+        <li class="mod-item"><span class="mod-n">02 ·</span> Why you do this — the honest root</li>
+        <li class="mod-item"><span class="mod-n">03 ·</span> Who you're for, who you're not</li>
+        <li class="mod-item"><span class="mod-n">04 ·</span> How you look — palette, typography, atmosphere</li>
+        <li class="mod-item"><span class="mod-n">05 ·</span> How you sound — voice rules, worked examples</li>
+        <li class="mod-item"><span class="mod-n">06 ·</span> How your website should work — section blueprint</li>
+        <li class="mod-item"><span class="mod-n">07 ·</span> How you summarize yourself — five taglines, one recommended</li>
+      </ol>
+      <p class="price-note">€247 · Generated within 30 seconds · Sent to your inbox the same day.</p>
+      <MetaballButton href="#footer" label="Start your ID" />
+    </div>
+
+    <div class="vault-preview r" data-d="3">
+      <div class="vault-hd">
+        <span class="vault-ttl">Resonance.ID — Brand System Preview</span>
+        <span class="vault-badge">Live</span>
+      </div>
+      <div class="swatches">
+        <div class="sw" style="background:#f9f9f9"></div>
+        <div class="sw" style="background:#f0eee9"></div>
+        <div class="sw" style="background:#d4cfc9"></div>
+        <div class="sw" style="background:#f75b1d"></div>
+        <div class="sw" style="background:#222222"></div>
+      </div>
+      <div class="vault-type">
+        <span class="vt-disp">Brand Identity</span>
+        <span class="vt-body">Clear, warm, unhurried — built to feel like your space.</span>
+        <span class="vt-mono">// RESONANCE.OS · IDENTITY SYSTEM · V3</span>
+      </div>
+      <div class="tag-card">
+        <span class="tag-rec">Recommended</span>
+        <p class="tag-q">"Where your body finds its frequency."</p>
+        <p class="tag-why">why this one — fits both studio and product narratives</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 05 RESONANCE.SITE ───────────────────────────── -->
+<section class="s" id="site" style="background: var(--bg-alt);">
+  <span class="lbl r">// RESONANCE.SITE</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">When something</span>
+    <span class="diag-line">is changing,</span>
+    <span class="diag-line">we build the site.</span>
+  </h2>
+
+  <div class="prod-grid" style="margin-top:2.5rem">
+    <div class="r" data-d="2">
+      <p class="body" style="margin-bottom:1rem">Resonance.SITE is the full Astro + Sanity build, on top of your ID. Up to four pages or one strong single-page. Two weeks from kickoff to live.</p>
+      <p class="body" style="margin-bottom:1rem">Built for the moment something is changing — a new location, a teacher training, a price step, an online program. Something where the existing website has stopped matching who you are.</p>
+      <p class="body" style="margin-bottom:2rem">Your ID is always built first — not as a trial for the site, but as its briefing. If you bought your ID already, the €247 is credited in full. From €3,500.</p>
+      <MetaballButton href="#footer" variant="ghost" label="Book a call" />
+    </div>
+
+    <div class="browser r" data-d="3">
+      <div class="browser-bar">
+        <div class="b-dot"></div><div class="b-dot"></div><div class="b-dot"></div>
+        <div class="b-url">resonance-os.studio</div>
+      </div>
+      <div class="browser-body">
+        <div class="b-nav">
+          <span class="b-logo">Resonance.OS</span>
+          <div class="b-links"><div class="b-link"></div><div class="b-link"></div><div class="b-link"></div></div>
+        </div>
+        <p class="b-h">Your brand, live<br>on every screen.</p>
+        <div class="b-line"></div>
+        <div class="b-line b-line--s"></div>
+        <span class="b-cta">Get started →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── LOGO SEPARATOR ────────────────────────────── -->
+<div class="logo-sep" style="background:var(--bg-alt)" aria-hidden="true">
+  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <use href="#logo-mark"/>
+  </svg>
+</div>
+
+
+<!-- ── 06 HOW IT WORKS ─────────────────────────────── -->
+<section class="s" id="how">
+  <span class="lbl r">// HOW IT WORKS</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">Three steps.</span>
+    <span class="diag-line">About 20 minutes.</span>
+  </h2>
+  <div class="steps">
+    <div class="step r" data-d="1">
+      <span class="step-n">01</span>
+      <p class="step-h">You answer 12 questions.</p>
+      <p class="step-p">Not a corporate form. A conversation, in your own words. About 20 minutes. What you do, how you teach, who you're for — and what you're tired of saying about yourself that still doesn't land.</p>
+    </div>
+    <div class="step r" data-d="2">
+      <span class="step-n">02</span>
+      <p class="step-h">The system listens.</p>
+      <p class="step-p">It reads where your energy went. It does not paraphrase what was already strong. Your literal words, where they're strongest, end up in the output. That's the whole mechanism.</p>
+    </div>
+    <div class="step r" data-d="3">
+      <span class="step-n">03</span>
+      <p class="step-h">Your dashboard is generated.</p>
+      <p class="step-p">Within 30 seconds. Sent to your inbox with a private link and access code. Then a 20-minute walk-through with Saja — to make sure it actually sits right.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 07 WHO IT'S FOR ─────────────────────────────── -->
+<section class="s" id="who" style="background:var(--bg-alt)">
+  <span class="lbl r">// WHO IT'S FOR</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">This is built</span>
+    <span class="diag-line">for one kind</span>
+    <span class="diag-line">of person.</span>
+  </h2>
+  <div class="who-grid">
+    <div class="r" data-d="2">
+      <p class="who-col-ttl">For you if</p>
+      <ul class="who-list">
+        <li class="who-item"><span class="who-dot">●</span>You run a boutique studio or work 1-on-1</li>
+        <li class="who-item"><span class="who-dot">●</span>You've been at it three years or more</li>
+        <li class="who-item"><span class="who-dot">●</span>You're at a turning point — repositioning, expanding, raising your prices, going online</li>
+        <li class="who-item"><span class="who-dot">●</span>Your Instagram looks like you. Your website doesn't.</li>
+      </ul>
+    </div>
+    <div class="r" data-d="3">
+      <p class="who-col-ttl">Not for you if</p>
+      <ul class="who-list">
+        <li class="who-item"><span class="who-dot" style="color:var(--ink-m)">●</span>You run a franchise</li>
+        <li class="who-item"><span class="who-dot" style="color:var(--ink-m)">●</span>You started this year</li>
+        <li class="who-item"><span class="who-dot" style="color:var(--ink-m)">●</span>You sell drop-in only</li>
+        <li class="who-item"><span class="who-dot" style="color:var(--ink-m)">●</span>You're shopping for a logo</li>
+        <li class="who-item"><span class="who-dot" style="color:var(--ink-m)">●</span>You're not in movement, wellness, or somatic work</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── LOGO SEPARATOR ────────────────────────────── -->
+<div class="logo-sep" style="background:var(--bg-alt)" aria-hidden="true">
+  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <use href="#logo-mark"/>
+  </svg>
+</div>
+
+
+<!-- ── 08 PROJECTS ─────────────────────────────────── -->
+<section class="s" id="projects">
+  <span class="lbl r">// PROJECTS</span>
+  <div class="project-list">
+    <div class="project-row r" data-d="1">
+      <span class="project-num">01</span>
+      <span class="project-name">KRAFTT</span>
+      <div class="project-meta">
+        <span class="project-badge">ID</span>
+        <span class="project-loc">KRAFTT Movement · Amsterdam</span>
+      </div>
+    </div>
+    <div class="project-row r" data-d="2">
+      <span class="project-num">02</span>
+      <span class="project-name">PMB</span>
+      <div class="project-meta">
+        <span class="project-badge">ID</span>
+        <span class="project-loc">Pilates Movement Berlin · Berlin</span>
+      </div>
+    </div>
+    <div class="project-row project-row--ph r" data-d="3">
+      <span class="project-num">03</span>
+      <span class="project-name">More coming soon</span>
+    </div>
+    <div class="project-row project-row--ph r" data-d="4">
+      <span class="project-num">04</span>
+      <span class="project-name">Your studio could be here</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── LOGO SEPARATOR ────────────────────────────── -->
+<div class="logo-sep" aria-hidden="true">
+  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <use href="#logo-mark"/>
+  </svg>
+</div>
+
+
+<!-- ── 09 WHAT YOU WALK AWAY WITH ─────────────────── -->
+<section class="s" id="sample" style="background:var(--bg-alt)">
+  <span class="lbl r">// WHAT YOU WALK AWAY WITH</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">A live preview</span>
+    <span class="diag-line">of what €247</span>
+    <span class="diag-line">gets you.</span>
+  </h2>
+  <div class="vault-full r" data-d="2">
+    <div class="vault-full-hd">
+      <span class="vault-full-ttl">Resonance.ID — Anonymous Preview · All seven modules</span>
+      <div class="swatches" style="margin-bottom:0">
+        <div class="sw" style="background:#f9f9f9"></div>
+        <div class="sw" style="background:#f0eee9"></div>
+        <div class="sw" style="background:#f75b1d"></div>
+        <div class="sw" style="background:#222222"></div>
+      </div>
+    </div>
+    <div class="vault-modules">
+      <div class="vmod"><p class="vmod-n">01</p><p class="vmod-ttl">Who you are</p><p class="vmod-sub">Written back to you, in your own words — not paraphrased, not sanitized.</p></div>
+      <div class="vmod"><p class="vmod-n">02</p><p class="vmod-ttl">Why you do this</p><p class="vmod-sub">The honest root. The thing that was true before the business existed.</p></div>
+      <div class="vmod"><p class="vmod-n">03</p><p class="vmod-ttl">Who you're for</p><p class="vmod-sub">Your person, exactly. And the person who would waste your time.</p></div>
+      <div class="vmod"><p class="vmod-n">04</p><p class="vmod-ttl">How you look</p><p class="vmod-sub">Palette, typography, atmosphere — and the rules that hold them together.</p></div>
+      <div class="vmod"><p class="vmod-n">05</p><p class="vmod-ttl">How you sound</p><p class="vmod-sub">Voice rules with worked examples. What to say. What to stop saying.</p></div>
+      <div class="vmod"><p class="vmod-n">06</p><p class="vmod-ttl">How your website should work</p><p class="vmod-sub">Section-by-section blueprint. What goes where. What to cut.</p></div>
+      <div class="vmod vmod--acc"><p class="vmod-n">07</p><p class="vmod-ttl">How you summarize yourself</p><p class="vmod-sub">Five taglines. One recommended — with a note on why that one.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 10 THE STUDIO ───────────────────────────────── -->
+<section class="s" id="studio">
+  <span class="lbl r">// THE STUDIO</span>
+  <h2 class="h2 diag-h r" data-d="1" style="margin-bottom:2rem">
+    <span class="diag-line">One person,</span>
+    <span class="diag-line">plus a system that</span>
+    <span class="diag-line">does the listening</span>
+    <span class="diag-line">at scale.</span>
+  </h2>
+  <div class="studio-grid">
+    <div class="studio-copy">
+      <p class="body-lg r" data-d="2">Resonance.OS is built and run by Saja Dehaan, working between Leeuwarden and Berlin. The system reads every intake. The person reviews every output before it ships.</p>
+      <p class="body r" data-d="3">The point of the studio is not to scale headcount. It's to keep one person close enough to the work that the output stays accurate — and to let the system do the listening so a brand identity doesn't cost €5,000 anymore.</p>
+      <MetaballButton href="#footer" variant="ghost" label="Get in touch" class="r" data-d="4" style="align-self:flex-start;margin-top:0.5rem" />
+    </div>
+    <div class="studio-av r" data-d="3">
+      <span class="studio-av-lbl">Saja Dehaan · Studio</span>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 11 CONVERSATIONS ────────────────────────────── -->
+<section class="s" id="testimonials" style="padding-bottom:0; background:var(--bg-alt)">
+  <span class="lbl r">// TESTIMONIALS</span>
+  <h2 class="h2 diag-h r" data-d="1">
+    <span class="diag-line">What people said</span>
+    <span class="diag-line">after their</span>
+    <span class="diag-line">Resonance.ID landed.</span>
+  </h2>
+  <div class="conv-track-wrap">
+    <div class="conv-track">
+      <div class="conv-set">
+        <article class="conv-card">
+          <span class="conv-card-who">[ Anna ] · Owner, Pilates studio · Amsterdam</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"I sat with the vault for an hour. The tagline is what I'd been trying to write for two years and couldn't."</div>
+            <div class="conv-reply">
+              <span class="conv-reply-who">[ Resonance.OS ]</span>
+              <span class="conv-line">That's the whole reason this exists.</span>
+              <span class="conv-line">You'd already written it. The system just listened.</span>
+            </div>
+          </div>
+        </article>
+        <article class="conv-card">
+          <span class="conv-card-who">[ Maya ] · Owner, Yoga studio · Berlin</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"I've rewritten my bio six times this year. This was the first version I didn't want to immediately change."</div>
+            <div class="conv-reply">
+              <span class="conv-reply-who">[ Resonance.OS ]</span>
+              <span class="conv-line">Six rewrites means you were close.</span>
+              <span class="conv-line">The intake found the one that had already arrived.</span>
+            </div>
+          </div>
+        </article>
+        <article class="conv-card">
+          <span class="conv-card-who">[ Lena ] · Teacher, Somatic movement · Copenhagen</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"Sent the tagline to my designer the same evening. She said: finally, I can actually build something."</div>
+            <div class="conv-reply">
+              <span class="conv-reply-who">[ Resonance.OS ]</span>
+              <span class="conv-line">That's the handoff this was built for.</span>
+            </div>
+          </div>
+        </article>
+        <article class="conv-card">
+          <span class="conv-card-who">[ Isabelle ] · Founder, Pilates studio · Paris</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"I was expecting something generic. The output had a sentence I wrote at 11pm in question seven, word for word."</div>
+            <div class="conv-reply">
+              <span class="conv-reply-who">[ Resonance.OS ]</span>
+              <span class="conv-line">That's not coincidence.</span>
+              <span class="conv-line">That's the whole mechanism.</span>
+            </div>
+          </div>
+        </article>
+      </div>
+      <!-- duplicate for seamless loop -->
+      <div class="conv-set" aria-hidden="true">
+        <article class="conv-card">
+          <span class="conv-card-who">[ Anna ] · Owner, Pilates studio · Amsterdam</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"I sat with the vault for an hour. The tagline is what I'd been trying to write for two years and couldn't."</div>
+            <div class="conv-reply"><span class="conv-reply-who">[ Resonance.OS ]</span><span class="conv-line">That's the whole reason this exists.</span><span class="conv-line">You'd already written it. The system just listened.</span></div>
+          </div>
+        </article>
+        <article class="conv-card">
+          <span class="conv-card-who">[ Maya ] · Owner, Yoga studio · Berlin</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"I've rewritten my bio six times this year. This was the first version I didn't want to immediately change."</div>
+            <div class="conv-reply"><span class="conv-reply-who">[ Resonance.OS ]</span><span class="conv-line">Six rewrites means you were close.</span><span class="conv-line">The intake found the one that had already arrived.</span></div>
+          </div>
+        </article>
+        <article class="conv-card">
+          <span class="conv-card-who">[ Lena ] · Teacher, Somatic movement · Copenhagen</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"Sent the tagline to my designer the same evening. She said: finally, I can actually build something."</div>
+            <div class="conv-reply"><span class="conv-reply-who">[ Resonance.OS ]</span><span class="conv-line">That's the handoff this was built for.</span></div>
+          </div>
+        </article>
+        <article class="conv-card">
+          <span class="conv-card-who">[ Isabelle ] · Founder, Pilates studio · Paris</span>
+          <div class="conv-thread">
+            <div class="conv-bubble">"I was expecting something generic. The output had a sentence I wrote at 11pm in question seven, word for word."</div>
+            <div class="conv-reply"><span class="conv-reply-who">[ Resonance.OS ]</span><span class="conv-line">That's not coincidence.</span><span class="conv-line">That's the whole mechanism.</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── 12 FAQ ──────────────────────────────────────── -->
+<section class="s" id="faq">
+  <span class="lbl r">// FAQ</span>
+  <h2 class="h2 diag-h r" data-d="1" style="margin-bottom:0">
+    <span class="diag-line">Common questions.</span>
+  </h2>
+  <div class="faq-grid">
+    <div class="faq-col">
+      <details class="faq-item">
+        <summary class="faq-q">Do I need a logo first?<svg class="faq-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg></summary>
+        <p class="faq-a">No. Resonance.ID produces the brief that tells a designer what to build. You can commission a logo after, hand the ID to your own designer, or come back for Resonance.SITE. The ID comes first because the logo should come from the brand — not the other way around.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">What if my answers come out messy?<svg class="faq-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg></summary>
+        <p class="faq-a">That's fine. The system is reading for where your energy went, not for polish. Messy answers often produce the strongest output because the real thing slips out before you can tidy it up.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Can I use Resonance.ID without buying a website?<svg class="faq-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg></summary>
+        <p class="faq-a">Yes. Most people do. The ID is a complete, standalone brand document. You can hand it to your own developer or designer, use it to brief a copywriter, or just use it as a reference when you write your own copy.</p>
+      </details>
+    </div>
+    <div class="faq-col">
+      <details class="faq-item">
+        <summary class="faq-q">What if I already have a designer?<svg class="faq-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg></summary>
+        <p class="faq-a">Your designer will love you for it. Resonance.ID is a design brief. Most designers spend weeks extracting exactly this information from clients. You'll arrive at their door with it already done.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Does it work in Dutch?<svg class="faq-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg></summary>
+        <p class="faq-a">Yes. Answer in Dutch, get your ID in Dutch. The system reads the language you write in and outputs in the same language. If you want the output in English, answer in English.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">What if the output doesn't feel right?<svg class="faq-icon" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg></summary>
+        <p class="faq-a">That's what the walk-through is for. Every Resonance.ID includes a 20-minute session with Saja. If the tagline is close but not quite right, we adjust it live. If a module missed the mark, we talk through why and fix it.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── SLASH SEPARATOR (Mantis-style) ─────────────── -->
+<div class="slash-sep" aria-hidden="true">// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+
+<!-- ── 13 FOOTER ──────────────────────────────────── -->
+<section class="s-footer" id="footer">
+  <div class="footer-cta">
+    <h2 class="footer-big diag-h">
+      <span class="diag-line">Start with</span>
+      <span class="diag-line">Resonance.ID.</span>
+    </h2>
+    <p class="footer-sub">€247. About 20 minutes. Sent to your inbox the same day.</p>
+    <div class="footer-btns">
+      <MetaballButton href="#" label="Begin" />
+      <MetaballButton href="mailto:saja@resonance-os.studio" variant="ghost" icon="mail" label="Or write — saja@resonance-os.studio" />
+    </div>
+  </div>
+
+  <div class="slash-sep" style="padding:0.5rem 0; margin-bottom:var(--vp)" aria-hidden="true">// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+  <div class="footer-bar">
+    <div class="footer-brand">
+      <svg width="20" height="20" viewBox="0 0 550 550" fill="none" style="flex-shrink:0">
+        <use href="#logo-mark"/>
+      </svg>
+      <div class="footer-brand-text">
+        <span class="footer-logo">Resonance.OS</span>
+        <span class="footer-tag">Brand identity for movement &amp; wellness.</span>
+      </div>
+    </div>
+    <nav class="footer-links">
+      <a href="#id">Resonance.ID</a>
+      <a href="#site">Resonance.SITE</a>
+      <a href="#studio">The studio</a>
+    </nav>
+    <div class="footer-right">
+      <a href="mailto:saja@resonance-os.studio" class="footer-contact">saja@resonance-os.studio</a>
+      <span class="footer-contact" style="cursor:default">Leeuwarden &amp; Berlin</span>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  // Scroll reveals
+  const ro = new IntersectionObserver(
+    (entries) => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('v'); ro.unobserve(e.target); }
+    }),
+    { threshold: 0.08 }
+  );
+  document.querySelectorAll('.r').forEach(el => ro.observe(el));
+
+  // Metaball nav
+  (function(){
+    var ITEMS = [
+      { label: 'Resonance.ID',   href: '#id',       w: 150 },
+      { label: 'Resonance.SITE', href: '#site',      w: 165 },
+      { label: 'Projects',       href: '#projects',  w: 115 }
+    ];
+    var BASE_GAP   = 10;
+    var ACTIVE_GAP = 30;
+    var HEIGHT     = 40;
+    var CORNER     = 12;
+    var V          = 0.54;
+    var HANDLE     = 2.4;
+    var PILL_FILL  = '#222222';
+    var ACTIVE     = -1;
+
+    // Hiroyuki Sato metaball algorithm (varun.ca/metaballs) — unchanged
+    function dist(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);}
+    function ang(a,b){return Math.atan2(a[1]-b[1],a[0]-b[0]);}
+    function vec(o,a,r){return [o[0]+Math.cos(a)*r,o[1]+Math.sin(a)*r];}
+    function metaball(r1,r2,c1,c2,hs,v){
+      var HP=Math.PI/2,d=dist(c1,c2),maxD=r1+r2*2.5,u1,u2;
+      if(r1===0||r2===0||d>maxD||d<=Math.abs(r1-r2)) return '';
+      if(d<r1+r2){
+        u1=Math.acos((r1*r1+d*d-r2*r2)/(2*r1*d));
+        u2=Math.acos((r2*r2+d*d-r1*r1)/(2*r2*d));
+      } else { u1=0; u2=0; }
+      var ac=ang(c2,c1),ms=Math.acos((r1-r2)/d);
+      var a1=ac+u1+(ms-u1)*v,a2=ac-u1-(ms-u1)*v;
+      var a3=ac+Math.PI-u2-(Math.PI-u2-ms)*v,a4=ac-Math.PI+u2+(Math.PI-u2-ms)*v;
+      var p1=vec(c1,a1,r1),p2=vec(c1,a2,r1),p3=vec(c2,a3,r2),p4=vec(c2,a4,r2);
+      var tr=r1+r2,d2b=Math.min(v*hs,dist(p1,p3)/tr),d2=d2b*Math.min(1,(d*2)/(r1+r2));
+      var hr1=r1*d2,hr2=r2*d2;
+      var h1=vec(p1,a1-HP,hr1),h2=vec(p2,a2+HP,hr1),h3=vec(p3,a3+HP,hr2),h4=vec(p4,a4-HP,hr2);
+      var f=function(p){return p[0].toFixed(2)+','+p[1].toFixed(2);};
+      return ['M',f(p1),'C',f(h1),f(h3),f(p3),'A',r2,r2,0,d>r1?1:0,0,f(p4),'C',f(h4),f(h2),f(p2)].join(' ');
+    }
+
+    var svg=document.getElementById('flBalls'),
+        labels=document.getElementById('flLabels'),
+        menu=document.getElementById('flMenu');
+    var R=HEIGHT/2,PAD=R+4,cy;
+    var curGaps=[],targetGaps=[];
+
+    function computeTargets(){
+      var t=[];
+      for(var i=0;i<ITEMS.length-1;i++)
+        t.push((i===ACTIVE-1||i===ACTIVE)?ACTIVE_GAP:BASE_GAP);
+      return t;
+    }
+
+    function render(gaps){
+      var x=PAD,rects=[];
+      ITEMS.forEach(function(it){
+        rects.push({x:x,w:it.w,it:it});
+        x+=it.w+(gaps[rects.length-1]!==undefined?gaps[rects.length-1]:0);
+      });
+      var totalW=x+PAD,totalH=HEIGHT+PAD*2;
+      cy=PAD+R;
+      svg.setAttribute('width',totalW);svg.setAttribute('height',totalH);
+      svg.setAttribute('viewBox','0 0 '+totalW+' '+totalH);
+      menu.style.width=totalW+'px';menu.style.height=totalH+'px';
+
+      var conn='';
+      for(var i=0;i<rects.length-1;i++){
+        var lc=[rects[i].x+rects[i].w-R,cy],rc=[rects[i+1].x+R,cy];
+        var bp=metaball(R,R,lc,rc,HANDLE,V);
+        if(bp) conn+='<path d="'+bp+'" fill="'+PILL_FILL+'"/>';
+      }
+      var caps='';
+      rects.forEach(function(r){
+        caps+='<rect x="'+r.x+'" y="'+PAD+'" width="'+r.w+'" height="'+HEIGHT+'" rx="'+CORNER+'" ry="'+CORNER+'" fill="'+PILL_FILL+'"/>';
+      });
+      svg.innerHTML=conn+caps;
+
+      if(!labels.childElementCount){
+        var html='';
+        rects.forEach(function(r,i){
+          html+='<a href="'+r.it.href+'" data-i="'+i+'" style="left:'+r.x+'px;width:'+r.w+'px;">'+r.it.label+'</a>';
+        });
+        labels.innerHTML=html;
+      } else {
+        labels.querySelectorAll('a').forEach(function(a,i){
+          a.style.left=rects[i].x+'px';a.style.width=rects[i].w+'px';
+        });
+      }
+    }
+
+    function animate(){
+      var moving=false;
+      for(var i=0;i<curGaps.length;i++){
+        var diff=targetGaps[i]-curGaps[i];
+        if(Math.abs(diff)>0.3){curGaps[i]+=diff*0.18;moving=true;}
+        else curGaps[i]=targetGaps[i];
+      }
+      render(curGaps);
+      if(moving) requestAnimationFrame(animate);
+    }
+
+    function setActive(i){ACTIVE=i;targetGaps=computeTargets();requestAnimationFrame(animate);}
+
+    for(var i=0;i<ITEMS.length-1;i++) curGaps.push(BASE_GAP);
+    targetGaps=computeTargets();
+    render(curGaps);
+    requestAnimationFrame(animate);
+
+    var sectionMap={'id':0,'site':1,'projects':2};
+    var sectionEls=Object.keys(sectionMap).map(function(id){return document.getElementById(id);}).filter(Boolean);
+    var ao=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var idx=sectionMap[e.target.id];
+          if(idx!==undefined) setActive(idx);
+        }
+      });
+    },{rootMargin:'-35% 0px -55% 0px'});
+    sectionEls.forEach(function(s){ao.observe(s);});
+  })();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+---
+// Component 20 — Metaball Split-Button
+// Two SVG blocks (icon + label) joined by an animated concave membrane.
+// client:visible semantics via IntersectionObserver — hydration deferred until
+// the element enters the viewport (200px margin).
+//
+// ⚑ CORNER radius: prototype used CORNER=14px. Production token --rad-btn is
+//   10px. The script reads --rad-btn at runtime so updating :root is enough.
+//   Update --rad-btn to 14px if you want the squarer prototype corners.
+//
+// ⚑ ONE-BUTTON-SHAPE: COMPONENTS.md §9 says one button shape. This component
+//   is documented as a Hero variant — reserved for hero and end-of-section
+//   CTAs. Flat .btn-primary/.btn-ghost remain canonical for inline and form
+//   contexts. See COMPONENTS.md §20 for full resolution.
+
+interface Props {
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: 'primary' | 'ghost';
+  size?: 'default' | 'sm';
+  label: string;
+  icon?: 'arrow' | 'mail';
+  class?: string;
+  'data-d'?: string | number;
+  style?: string;
+}
+
+const {
+  href,
+  type = 'button',
+  variant = 'primary',
+  size = 'default',
+  label,
+  icon = 'arrow',
+  class: className = '',
+  'data-d': dataD,
+  style,
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const H = size === 'sm' ? 36 : 44;
+---
+
+<Tag
+  href={href || undefined}
+  type={!href ? type : undefined}
+  class:list={['ms-btn', `ms-btn--${variant}`, `ms-btn--${size}`, className]}
+  data-variant={variant}
+  data-height={H}
+  data-d={dataD}
+  style={style}
+>
+  <span class="ms-btn-icon" aria-hidden="true">
+    {icon === 'arrow' && (
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 6h10M7 2l4 4-4 4" />
+      </svg>
+    )}
+    {icon === 'mail' && (
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="3" width="10" height="7" rx="1" />
+        <path d="M1 3l5 4 5-4" />
+      </svg>
+    )}
+  </span>
+  <span class="ms-btn-label">{label}</span>
+</Tag>
+
+<style>
+  /* Pre-hydration fallback — renders as a solid button without JS */
+  .ms-btn {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    font-family: var(--fu);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    white-space: nowrap;
+    border: none;
+    border-radius: var(--rad-btn);
+    height: 44px;
+  }
+
+  .ms-btn--sm    { height: 36px; font-size: 0.8125rem; }
+  .ms-btn--primary { background: var(--accent); }
+  .ms-btn--ghost   { background: var(--ink); }
+
+  .ms-btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .ms-btn--sm .ms-btn-icon { width: 36px; height: 36px; }
+  .ms-btn-icon svg { width: 15px; height: 15px; display: block; }
+
+  /* Post-hydration: SVG owns the visual — strip CSS background */
+  .ms-btn.is-hydrated {
+    background: none;
+    border-radius: 0;
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+  }
+
+  /* Focus ring: 2px accent, 3px offset — system standard */
+  .ms-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: var(--rad-btn);
+  }
+
+  /* After hydration the SVG overhangs slightly — give the ring more room */
+  .ms-btn.is-hydrated:focus-visible {
+    border-radius: 0;
+    outline-offset: 5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ms-btn { transition: none; }
+  }
+</style>
+
+<script>
+(function () {
+  // ── tuned constants (final — do not modify) ──────────────────────────────
+  var BASE_GAP  = 0;     // rest: blocks touching, tight metaball pinch
+  var HOVER_GAP = 15;    // hover: blocks separate, elongated concave neck
+  var V         = 0.54;  // membrane curvature — matches navbar pill connector
+  var HANDLE    = 2.4;   // bezier handle scale — matches navbar
+  var PAD       = 10;    // SVG breathing room, must exceed neck overshoot
+  var LABEL_PAD = 40;    // px added to measured label width for padding
+  var EASE      = 0.18;  // rAF lerp factor
+  // ─────────────────────────────────────────────────────────────────────────
+
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Resolve tokens once. CORNER reads --rad-btn so a single CSS change flows
+  // through everywhere. See ⚑ flag in component header about 10px vs 14px.
+  var rootStyle   = getComputedStyle(document.documentElement);
+  var CORNER      = parseInt(rootStyle.getPropertyValue('--rad-btn')) || 10;
+  var colorAccent = rootStyle.getPropertyValue('--accent').trim() || '#f75b1d';
+  var colorInk    = rootStyle.getPropertyValue('--ink').trim()    || '#222222';
+  var colorWhite  = rootStyle.getPropertyValue('--white').trim()  || '#ffffff';
+
+  // ── Hiroyuki Sato metaball — verbatim, matches navbar pill connector ─────
+  function dist(a, b) { return Math.hypot(a[0]-b[0], a[1]-b[1]); }
+  function ang(a, b)  { return Math.atan2(a[1]-b[1], a[0]-b[0]); }
+  function vec(o, a, r) { return [o[0]+Math.cos(a)*r, o[1]+Math.sin(a)*r]; }
+
+  function metaball(r1, r2, c1, c2, hs, v) {
+    var HP=Math.PI/2, d=dist(c1,c2), maxD=r1+r2*2.5, u1, u2;
+    if (r1===0||r2===0||d>maxD||d<=Math.abs(r1-r2)) return '';
+    if (d < r1+r2) {
+      u1 = Math.acos((r1*r1+d*d-r2*r2) / (2*r1*d));
+      u2 = Math.acos((r2*r2+d*d-r1*r1) / (2*r2*d));
+    } else { u1=0; u2=0; }
+    var ac=ang(c2,c1), ms=Math.acos((r1-r2)/d);
+    var a1=ac+u1+(ms-u1)*v,   a2=ac-u1-(ms-u1)*v;
+    var a3=ac+Math.PI-u2-(Math.PI-u2-ms)*v, a4=ac-Math.PI+u2+(Math.PI-u2-ms)*v;
+    var p1=vec(c1,a1,r1), p2=vec(c1,a2,r1), p3=vec(c2,a3,r2), p4=vec(c2,a4,r2);
+    var tr=r1+r2, d2b=Math.min(v*hs,dist(p1,p3)/tr), d2=d2b*Math.min(1,(d*2)/(r1+r2));
+    var hr1=r1*d2, hr2=r2*d2;
+    var h1=vec(p1,a1-HP,hr1), h2=vec(p2,a2+HP,hr1), h3=vec(p3,a3+HP,hr2), h4=vec(p4,a4-HP,hr2);
+    var f = function(p) { return p[0].toFixed(2)+','+p[1].toFixed(2); };
+    return ['M',f(p1),'C',f(h1),f(h3),f(p3),'A',r2,r2,0,d>r1?1:0,0,f(p4),'C',f(h4),f(h2),f(p2)].join(' ');
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
+  function draw(s) {
+    var g=s.curGap, iW=s.iW, lW=s.lW, H=s.H, R=s.R;
+    var cy=PAD+R, x0=PAD, x1=x0+iW+g;
+    var totalW=x1+lW+PAD, totalH=H+PAD*2;
+
+    s.svg.setAttribute('width',   totalW);
+    s.svg.setAttribute('height',  totalH);
+    s.svg.setAttribute('viewBox', '0 0 '+totalW+' '+totalH);
+    s.svg.style.left = (-PAD)+'px';
+    s.svg.style.top  = (-PAD)+'px';
+
+    var lc=[x0+iW-R, cy], rc=[x1+R, cy];
+    var bp = metaball(R, R, lc, rc, HANDLE, V);
+    var conn  = bp ? '<path d="'+bp+'" fill="'+s.fill+'"/>' : '';
+    var iRect = '<rect x="'+x0+'" y="'+PAD+'" width="'+iW+'" height="'+H+'" rx="'+CORNER+'" ry="'+CORNER+'" fill="'+s.fill+'"/>';
+    var lRect = '<rect x="'+x1+'" y="'+PAD+'" width="'+lW+'" height="'+H+'" rx="'+CORNER+'" ry="'+CORNER+'" fill="'+s.fill+'"/>';
+    s.svg.innerHTML = conn + iRect + lRect;
+
+    s.btn.style.width  = (iW+g+lW)+'px';
+    s.btn.style.height = H+'px';
+    s.iconEl.style.left  = '0px';
+    s.iconEl.style.width = iW+'px';
+    s.labelEl.style.left  = (iW+g)+'px';
+    s.labelEl.style.width = lW+'px';
+  }
+
+  function animStep(s) {
+    var diff = s.targetGap - s.curGap;
+    if (Math.abs(diff) > 0.3) {
+      s.curGap += diff * EASE;
+      draw(s);
+      requestAnimationFrame(function() { animStep(s); });
+    } else {
+      s.curGap = s.targetGap;
+      draw(s);
+    }
+  }
+
+  function setGap(s, gap, newFill) {
+    if (newFill !== undefined) s.fill = newFill;
+    if (reducedMotion) { s.curGap = gap; s.targetGap = gap; draw(s); return; }
+    s.targetGap = gap;
+    requestAnimationFrame(function() { animStep(s); });
+  }
+
+  function build(btn) {
+    if (btn.classList.contains('is-hydrated')) return;
+
+    var H = parseInt(btn.dataset.height) || 44;
+    var R = H / 2;
+    var isPrimary = btn.dataset.variant === 'primary';
+    var fill      = isPrimary ? colorAccent : colorInk;
+    var fillHover = colorInk; // both variants deepen to --ink on hover
+
+    var iconEl  = btn.querySelector('.ms-btn-icon');
+    var labelEl = btn.querySelector('.ms-btn-label');
+    if (!labelEl || !iconEl) return;
+
+    var lW = Math.ceil(labelEl.getBoundingClientRect().width) + LABEL_PAD;
+    var iW = H;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;pointer-events:none;overflow:visible;';
+    btn.insertBefore(svg, btn.firstChild);
+
+    btn.classList.add('is-hydrated');
+
+    iconEl.style.cssText  = 'position:absolute;top:0;height:'+H+'px;'+
+      'display:flex;align-items:center;justify-content:center;'+
+      'z-index:1;color:'+colorWhite+';pointer-events:none;';
+    labelEl.style.cssText = 'position:absolute;top:0;height:'+H+'px;'+
+      'display:flex;align-items:center;padding-left:18px;'+
+      'z-index:1;color:'+colorWhite+';white-space:nowrap;pointer-events:none;';
+
+    var s = {
+      btn: btn, svg: svg, iconEl: iconEl, labelEl: labelEl,
+      iW: iW, lW: lW, H: H, R: R,
+      fill: fill, baseFill: fill, hoverFill: fillHover,
+      curGap: BASE_GAP, targetGap: BASE_GAP
+    };
+    draw(s);
+
+    btn.addEventListener('mouseenter', function() { setGap(s, HOVER_GAP, s.hoverFill); });
+    btn.addEventListener('mouseleave', function() { setGap(s, BASE_GAP,  s.baseFill);  });
+    btn.addEventListener('focus',      function() { setGap(s, HOVER_GAP, s.hoverFill); });
+    btn.addEventListener('blur',       function() { setGap(s, BASE_GAP,  s.baseFill);  });
+  }
+
+  // client:visible semantics — defer until element nears viewport
+  var io = new IntersectionObserver(function(entries, obs) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      obs.unobserve(entry.target);
+      build(entry.target);
+    });
+  }, { rootMargin: '200px 0px' });
+
+  function observe() {
+    document.querySelectorAll('.ms-btn:not(.is-hydrated)').forEach(function(btn) {
+      io.observe(btn);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function() { requestAnimationFrame(observe); });
+  } else {
+    requestAnimationFrame(observe);
+  }
+})();
+</script>
