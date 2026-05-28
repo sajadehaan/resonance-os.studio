@@ -17,7 +17,7 @@ import MetaballButton from '../components/MetaballButton.astro';
   <style>
     /* ── RESET ───────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; scroll-behavior: smooth; }
+    html { font-size: 16px; }
     body { background: var(--bg); font-family: var(--fu); color: var(--ink); -webkit-font-smoothing: antialiased; }
     a { text-decoration: none; color: inherit; }
     ul, ol { list-style: none; }
@@ -44,7 +44,10 @@ import MetaballButton from '../components/MetaballButton.astro';
       --sp:  max(var(--hp), calc((100% - var(--cm)) / 2));
       --rad:     12px;   /* outer container radius */
       --rad-btn: 10px;   /* button + nav pill radius */
-      --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+      --smooth:     cubic-bezier(.84, 0, .16, 1);
+      --ease:       .8s cubic-bezier(.84, 0, .16, 1);
+      --fast-ease:  .5s cubic-bezier(.84, 0, .16, 1);
+      --color-ease: .4s ease-out;
     }
 
     /* ── LAYOUT ──────────────────────────────────── */
@@ -519,18 +522,9 @@ import MetaballButton from '../components/MetaballButton.astro';
     }
     .footer-contact:hover { color: var(--ink); }
 
-    /* ── REVEAL ──────────────────────────────────── */
-    .r {
-      opacity: 0; transform: translateY(20px);
-      transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    /* ── REVEAL — GSAP drives this; CSS is no-JS fallback ── */
+    .r { opacity: 0; transform: translateY(20px); }
     .r.v { opacity: 1; transform: none; }
-    .r[data-d="1"] { transition-delay:  80ms; }
-    .r[data-d="2"] { transition-delay: 160ms; }
-    .r[data-d="3"] { transition-delay: 240ms; }
-    .r[data-d="4"] { transition-delay: 320ms; }
-    .r[data-d="5"] { transition-delay: 400ms; }
 
     /* ── RESPONSIVE ──────────────────────────────── */
     @media (max-width: 960px) {
@@ -549,7 +543,7 @@ import MetaballButton from '../components/MetaballButton.astro';
       .project-meta { display: none; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .r { opacity: 1; transform: none; transition: none; }
+      .r { opacity: 1; transform: none; }
       .logo-sep-mark { animation: none; opacity: 0.15; }
       .conv-track { animation: none; }
       .faq-icon { transition: none; }
@@ -1151,14 +1145,97 @@ import MetaballButton from '../components/MetaballButton.astro';
 
 
 <script>
-  // Scroll reveals
-  const ro = new IntersectionObserver(
-    (entries) => entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('v'); ro.unobserve(e.target); }
-    }),
-    { threshold: 0.08 }
-  );
-  document.querySelectorAll('.r').forEach(el => ro.observe(el));
+  import { initScroll } from '../lib/scroll';
+  import { gsap } from '../lib/gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const EASE = 'cubic-bezier(.84, 0, .16, 1)';
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // ── LENIS ──────────────────────────────────────
+    initScroll();
+
+    // KEY RULE: .r elements have CSS opacity:0/translateY(20px) as their resting state.
+    // gsap.from() reads the element's current CSS as the TO target — so from(opacity:0)
+    // animates 0→0 and nothing appears. Use gsap.to() for .r elements (CSS is the FROM).
+    // Use gsap.fromTo() when special starting state (x, scale) differs from CSS.
+    // Keep gsap.from() only for non-.r elements (logo-sep-mark, vmod) whose CSS is visible.
+
+    // ── HERO LOAD ──────────────────────────────────
+    gsap.to(['.hero-eyebrow', '.hero-sub', '.hero-ctas', '.vault-slide'], {
+      opacity: 1, y: 0, duration: 1.0, ease: EASE, stagger: 0.12, delay: 0.2,
+    });
+
+    // ── HERO SCRUB ─────────────────────────────────
+    gsap.to('.s-hero', {
+      y: -40, ease: 'none',
+      scrollTrigger: { trigger: '.s-hero', start: 'top top', end: 'bottom top', scrub: true },
+    });
+
+    // ── LOGO SEPARATORS ─────────────────────────────
+    // Not .r → CSS is visible → gsap.from() works correctly
+    gsap.utils.toArray<HTMLElement>('.logo-sep-mark').forEach((mark) => {
+      gsap.from(mark, {
+        scale: 0.8, opacity: 0, duration: 1.2, ease: EASE,
+        scrollTrigger: { trigger: mark, start: 'top 85%', once: true },
+      });
+    });
+
+    // ── EDITORIAL ITEMS ──────────────────────────────
+    gsap.utils.toArray<HTMLElement>('.editorial-item').forEach((item, i) => {
+      gsap.to(item, {
+        opacity: 1, y: 0, duration: 0.85, ease: EASE, delay: i * 0.08,
+        scrollTrigger: { trigger: item, start: 'top 88%', once: true },
+      });
+    });
+
+    // ── PROJECT ROWS ─────────────────────────────────
+    // Special x:-12 start → fromTo() to override CSS transform
+    gsap.fromTo('.project-row',
+      { opacity: 0, x: -12, y: 0 },
+      { opacity: 1, x: 0, y: 0, duration: 0.7, ease: EASE, stagger: 0.06,
+        scrollTrigger: { trigger: '.project-list', start: 'top 88%', once: true } }
+    );
+
+    // ── VAULT / BROWSER CARDS ────────────────────────
+    // Special scale:0.98 start → fromTo()
+    gsap.utils.toArray<HTMLElement>('.vault-preview, .vault-full, .browser').forEach((card) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 32, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 1.0, ease: EASE,
+          scrollTrigger: { trigger: card, start: 'top 88%', once: true } }
+      );
+    });
+
+    // ── STEPS ────────────────────────────────────────
+    gsap.to('.step', {
+      opacity: 1, y: 0, duration: 0.8, ease: EASE, stagger: 0.1,
+      scrollTrigger: { trigger: '.steps', start: 'top 88%', once: true },
+    });
+
+    // ── VAULT MODULES ────────────────────────────────
+    // Not .r → CSS is visible → gsap.from() works correctly
+    gsap.from('.vmod', {
+      opacity: 0, y: 16, duration: 0.7, ease: EASE, stagger: 0.05,
+      scrollTrigger: { trigger: '.vault-modules', start: 'top 88%', once: true },
+    });
+
+    // ── SECTION STAGGER — generic .r (lbl, h2, body, etc.) ──
+    // Excludes elements handled by specific animations above
+    gsap.utils.toArray<HTMLElement>('.s').forEach((section) => {
+      const items = section.querySelectorAll(
+        '.r:not(.editorial-item):not(.project-row):not(.vault-preview):not(.vault-full):not(.browser):not(.step)'
+      );
+      if (!items.length) return;
+      gsap.to(items, {
+        opacity: 1, y: 0, duration: 0.9, ease: EASE, stagger: 0.09,
+        scrollTrigger: { trigger: section, start: 'top 88%', once: true },
+      });
+    });
+
+  } else {
+    document.querySelectorAll('.r').forEach(el => (el as HTMLElement).classList.add('v'));
+  }
 
   // Metaball nav
   (function(){
