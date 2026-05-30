@@ -1,0 +1,305 @@
+---
+import MetaballButton from '../components/MetaballButton.astro';
+import '../styles/global.css';
+// Note: Lenis smooth-scroll init wired in the body <script> below via lib/scroll.ts
+
+interface Props {
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  ctaHeadlineA?: string;
+  ctaHeadlineB?: string;
+  ctaSub?: string;
+}
+
+const {
+  title = 'Resonance.OS — Brand Identity for Movement & Wellness',
+  description = 'A brand identity studio for boutique movement and wellness operators. We close the gap between who you are when you teach and how you come across on a screen.',
+  ctaLabel = 'Start your ID — €247',
+  ctaHref = 'mailto:saja@resonance-os.studio?subject=Start%20my%20Resonance.ID',
+  ctaHeadlineA = 'Start with',
+  ctaHeadlineB = 'Resonance.ID.',
+  ctaSub = '€247. About 20 minutes. Sent to your inbox the same day.',
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="icon" href="/Resonance.OS - logo n-background.svg" type="image/svg+xml" />
+  <link rel="icon" href="/Resonance.OS - logo n-background@2x.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@200;300;400;500;600;700&family=Geist+Mono:wght@400&display=swap" rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.48/build/spline-viewer.js"></script>
+</head>
+
+<body>
+
+<!-- Reusable logo mark — referenced by all separators and footer icon -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <defs>
+    <symbol id="logo-mark" viewBox="0 0 550 550">
+      <path d="M285.198 35C297.077 37.1823 309.206 51.6495 314.695 70.7247C319.229 86.4799 320.074 106.964 317.063 123.876C312.899 147.271 304.214 157.484 292.49 168.02C298.006 178.338 300.176 185.993 302.408 199.501C308.975 195.721 316.233 185.991 320.499 176.439C328.074 159.477 330.936 137.369 329.387 116.019C327.347 87.8998 317.862 57.1411 305.33 39.6565C320.828 49.3777 338.323 68.6099 343.686 97.9016C347.332 117.815 345.958 140.191 340.526 158.755C332.583 185.906 318.878 199.136 303.059 208.097C302.908 219.565 301.172 226.157 298.133 236.038C303.433 235.02 309.064 232.631 314.194 230.142C328.577 223.163 342.427 214.412 352.703 194.228C360.925 178.117 365.138 156.769 364.382 135.04C363.578 109.524 355.613 85.7229 345.017 68.9869C353.927 76.7989 361.846 87.7709 368.287 101.229C379.247 124.554 382.672 146.187 375.808 174.959C373.488 184.886 370.078 193.888 365.778 201.434C353.635 222.746 332.627 235.152 316.202 240.551C312.548 241.76 308.872 242.741 305.18 243.495C301.637 244.264 297.983 244.861 294.478 246.039C287.117 248.514 281.471 257.875 280.76 271.52C293.225 271.296 306.769 270.122 319.113 268.292C336.262 265.562 353.4 261.924 368.763 247.215C387.463 229.313 395.094 199.622 389.693 163.16C387.796 150.351 385.394 138.828 381.849 127.206C382.626 128.724 383.376 130.281 384.101 131.878C394.128 154.217 401.8 190.861 399.529 219.274C397.363 246.385 391.556 257.454 380.328 273.409C383.494 278.751 386.766 282.9 389.7 288.858C395.821 301.285 399.388 317.728 399.921 334.181C400.942 365.655 391.897 401.833 380.471 425.227C380.632 423.882 383.78 414.816 384.426 412.385C385.491 408.73 386.13 404.634 387.002 400.869C393.915 371.022 393.906 338.335 379.665 315.024C362.281 286.571 337.202 282.702 314.714 279.762C303.572 278.304 291.798 277.297 280.621 277.605C283.129 300.125 292.749 302.878 303.625 304.37C308.546 305.045 313.979 306.918 318.865 308.465C347.195 317.265 383.837 352.497 378.176 412.971C375.263 444.085 358.944 463.742 345.291 479.441C346.857 476.328 348.547 473.501 350.094 470.213C356.532 456.524 360.946 442.52 362.977 424.863C365.33 404.403 363.631 382.309 357.029 364.744C347.214 338.634 330.129 325.316 313.653 317.461C308.519 315.013 302.855 313.189 297.628 311.32C301.622 323.062 302.979 327.399 303.385 341.107C309.608 343.717 315.582 347.936 321.118 353.631C332.404 365.306 340.606 384.522 343.902 407.011C346.681 426.289 345.197 447.38 339.68 464.807C333.38 484.706 318.313 502.313 305.95 507.877C327.382 476.361 338.31 417.695 321.106 374.071C316.738 362.996 310.198 353.703 303.118 348.659C300.487 364.987 299.221 368.101 292.791 380.294C296.012 382.802 299.033 385.227 301.887 388.976C310.57 400.403 316.364 417.48 318.005 436.484C320.697 468.853 312.165 496.887 295.002 509.53C290.706 512.694 286.588 513.805 282.042 515C294.802 505.962 303.339 494.473 307.673 470.25C315.272 427.783 295.66 384.431 270.549 390.927C261.329 393.332 253.043 402.252 247.562 415.671C242.158 429.09 239.985 445.792 241.525 462.074C243.345 481.863 249.306 495.272 258.242 506.596C261.056 509.801 263.705 511.942 266.701 514.498C263.974 514.018 261.282 513.026 258.672 511.537C226.279 493.383 222.927 421.83 249.226 387.849C251.646 384.722 254.517 382.248 257.177 379.793C251.21 369.609 249.506 362.617 247.237 348.533C239.477 354.963 234.11 361.757 228.651 373.882C222.04 388.566 218.737 409.864 219.943 428.541C221.993 460.125 230.945 489.001 244.862 508.921C238.607 504.623 234.921 503 228.828 496.622C217.747 485.021 209.724 468.732 206.432 446.326C203.286 424.781 205.147 401.889 211.593 382.816C219.416 359.147 232.449 347.657 246.782 341.061C246.823 329.253 248.745 320.825 252.417 311.164C233.185 317.747 212.824 326.201 198.298 352.025C190.456 365.966 185.296 388.063 185.753 407.866C186.449 437.995 193.754 458.314 205.501 478.213C195.971 469.152 182.301 450.638 176.336 434.445C171.502 421.322 169.985 401.43 171.991 386.016C178.687 334.566 210.033 313.642 236.154 306.879C239.171 306.09 242.197 305.418 245.231 304.86C257.037 302.713 266.636 302.07 269.521 277.347C244.932 278.598 202.409 279.24 181.574 301.503C171.694 312.06 163.447 327.426 160.63 347.801C157.066 373.576 161.935 399.222 169.418 421.165C154.385 394.774 145.135 347.261 153.047 311.427C156.577 295.439 163.142 284.207 170.659 274.15C169.413 272.546 168.182 270.906 166.966 269.23C157.432 255.987 151.797 239.851 150.279 218.294C148.277 189.848 157.378 151.644 167.15 129.395C159.332 163.49 153.306 199.417 169.362 230.184C178.394 247.49 188.233 254.134 200.682 259.74C223.473 270.004 246.283 269.767 269.523 271.484C268.166 257.152 262.406 247.218 254.202 245.461C251.981 244.985 249.733 244.608 247.512 244.121C243.493 243.234 239.481 242.276 235.473 241.246C213.074 235.255 187.159 218.493 175.74 180.842C171.366 166.419 169.091 147.138 171.993 131.225C175.626 111.305 183.387 95.3401 192.751 83.0688C196.289 78.3978 199.497 74.1691 203.444 70.5434C193.928 86.8417 187.822 108.439 186.138 131.759C185.307 143.859 185.846 155.59 188.025 167.147C196.766 213.513 227.847 231.056 252.4 236.222C248.615 224.978 247.938 221.514 247.289 208.349C243.959 206.726 240.702 204.665 237.544 202.182C225.226 192.494 212.704 175.145 207.796 152.219C203.497 131.999 203.86 109.572 208.806 89.8264C214.991 65.3028 230.03 49.4998 243.694 40.2709C224.275 70.6913 212.605 123.846 225.989 167.362C230.237 181.176 239.232 195.538 247.891 199.793C249.92 185.232 252.492 178.459 258.28 168.052C253.4 164.195 250.015 161.552 245.769 155.537C237.85 144.422 232.787 128.082 231.73 110.225C230.598 92.0656 233.288 73.7641 239.755 59.4607C245.903 45.7952 254.892 37.1337 264.679 35.443C248.433 48.6025 237.476 80.241 242.148 112.172C249.782 164.35 288.753 175.754 304.47 127.846C309.03 113.66 310.246 96.8351 307.852 81.0565C305.608 65.7655 300.207 52.6629 293.047 43.3498C290.631 40.2072 287.794 37.7307 285.198 35Z" fill="#222222"/>
+      <path d="M274.452 50.0306C282.73 49.1226 289.687 68.5189 289.99 93.3541C290.293 118.189 283.828 139.059 275.549 139.969C267.27 140.879 260.313 121.483 260.01 96.6459C259.707 71.8094 266.173 50.9386 274.452 50.0306Z" fill="#f75b1d"/>
+      <path d="M274.452 410.031C282.73 409.123 289.687 428.519 289.99 453.354C290.293 478.189 283.828 499.059 275.549 499.969C267.27 500.879 260.313 481.483 260.01 456.646C259.707 431.809 266.173 410.939 274.452 410.031Z" fill="#f75b1d"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ── NAV ──────────────────────────────────────── -->
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <svg class="nav-logo-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <use href="#logo-mark"/>
+    </svg>
+    Resonance.OS
+  </a>
+  <div class="nav-right">
+    <div class="fl-menu" id="flMenu">
+      <svg class="fl-balls" id="flBalls" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="fl-labels" id="flLabels"></div>
+    </div>
+    <MetaballButton href="#footer" label="Get in touch" />
+  </div>
+  <button class="nav-hamburger" id="navHamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
+    <span class="nav-hamburger-line" aria-hidden="true"></span>
+    <span class="nav-hamburger-line" aria-hidden="true"></span>
+    <span class="nav-hamburger-line" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<!-- ── MOBILE OVERLAY MENU ─────────────────────── -->
+<div class="nav-overlay" id="navMenu" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="nav-overlay-top">
+    <a href="/" class="nav-logo nav-logo--overlay">
+      <svg class="nav-logo-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <use href="#logo-mark"/>
+      </svg>
+      Resonance.OS
+    </a>
+    <button class="nav-close" id="navClose" type="button" aria-label="Close menu">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M1 1l12 12M13 1L1 13"/>
+      </svg>
+    </button>
+  </div>
+  <nav class="nav-overlay-links" aria-label="Mobile primary">
+    <a href="/id"><span class="nav-overlay-n">01</span><span class="nav-overlay-lbl">Resonance.ID</span><span class="nav-overlay-arrow" aria-hidden="true">→</span></a>
+    <a href="/site"><span class="nav-overlay-n">02</span><span class="nav-overlay-lbl">Resonance.SITE</span><span class="nav-overlay-arrow" aria-hidden="true">→</span></a>
+    <a href="/#projects"><span class="nav-overlay-n">03</span><span class="nav-overlay-lbl">Projects</span><span class="nav-overlay-arrow" aria-hidden="true">→</span></a>
+    <a href="/#studio"><span class="nav-overlay-n">04</span><span class="nav-overlay-lbl">The studio</span><span class="nav-overlay-arrow" aria-hidden="true">→</span></a>
+  </nav>
+  <div class="nav-overlay-foot">
+    <a href="mailto:saja@resonance-os.studio">saja@resonance-os.studio</a>
+    <span>Leeuwarden &amp; Berlin</span>
+  </div>
+</div>
+
+<slot />
+
+<!-- ── SLASH SEPARATOR ─────────────────────────────── -->
+<div class="slash-sep" aria-hidden="true">// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+<!-- ── FOOTER ──────────────────────────────────────── -->
+<section class="s-footer" id="footer">
+  <div class="footer-cta">
+    <h2 class="footer-big diag-h">
+      <span class="diag-line">{ctaHeadlineA}</span>
+      <span class="diag-line">{ctaHeadlineB}</span>
+    </h2>
+    <p class="footer-sub">{ctaSub}</p>
+    <div class="footer-btns">
+      <MetaballButton href={ctaHref} label={ctaLabel} />
+      <MetaballButton href="mailto:saja@resonance-os.studio" variant="ghost" icon="mail" label="Or write — saja@resonance-os.studio" />
+    </div>
+  </div>
+
+  <div class="slash-sep" style="padding:0.5rem 0; margin-bottom:var(--vp)" aria-hidden="true">// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</div>
+
+  <div class="footer-bar">
+    <div class="footer-brand">
+      <svg width="20" height="20" viewBox="0 0 550 550" fill="none" style="flex-shrink:0">
+        <use href="#logo-mark"/>
+      </svg>
+      <div class="footer-brand-text">
+        <span class="footer-logo">Resonance.OS</span>
+        <span class="footer-tag">Brand identity for movement &amp; wellness.</span>
+      </div>
+    </div>
+    <nav class="footer-links">
+      <a href="/id">Resonance.ID</a>
+      <a href="/site">Resonance.SITE</a>
+      <a href="/#studio">The studio</a>
+    </nav>
+    <div class="footer-right">
+      <a href="mailto:saja@resonance-os.studio" class="footer-contact">saja@resonance-os.studio</a>
+      <span class="footer-contact" style="cursor:default">Leeuwarden &amp; Berlin</span>
+    </div>
+  </div>
+
+  <nav class="footer-legal" aria-label="Legal">
+    <a href="/terms">Terms of Service</a>
+    <a href="/refund-policy">Refund Policy</a>
+  </nav>
+</section>
+
+
+<script>
+  // Lenis smooth scroll — wired across every page through this layout
+  import { initScroll } from '../lib/scroll';
+  initScroll();
+
+  // Scroll reveals
+  const ro = new IntersectionObserver(
+    (entries) => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('v'); ro.unobserve(e.target); }
+    }),
+    { threshold: 0.08 }
+  );
+  document.querySelectorAll('.r').forEach(el => ro.observe(el));
+
+  // Metaball nav
+  (function(){
+    var ITEMS = [
+      { label: 'Resonance.ID',   href: '/id',        w: 150 },
+      { label: 'Resonance.SITE', href: '/site',      w: 165 },
+      { label: 'Projects',       href: '/#projects', w: 115 }
+    ];
+    var BASE_GAP   = 10;
+    var ACTIVE_GAP = 30;
+    var HEIGHT     = 40;
+    var CORNER     = 12;
+    var V          = 0.54;
+    var HANDLE     = 2.4;
+    var PILL_FILL  = '#222222';
+
+    // Active item by current path — subpages light their own pill
+    var path = location.pathname.replace(/\/$/, '');
+    var ACTIVE = path === '/id' ? 0 : path === '/site' ? 1 : -1;
+
+    // Hiroyuki Sato metaball algorithm (varun.ca/metaballs) — unchanged
+    function dist(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1]);}
+    function ang(a,b){return Math.atan2(a[1]-b[1],a[0]-b[0]);}
+    function vec(o,a,r){return [o[0]+Math.cos(a)*r,o[1]+Math.sin(a)*r];}
+    function metaball(r1,r2,c1,c2,hs,v){
+      var HP=Math.PI/2,d=dist(c1,c2),maxD=r1+r2*2.5,u1,u2;
+      if(r1===0||r2===0||d>maxD||d<=Math.abs(r1-r2)) return '';
+      if(d<r1+r2){
+        u1=Math.acos((r1*r1+d*d-r2*r2)/(2*r1*d));
+        u2=Math.acos((r2*r2+d*d-r1*r1)/(2*r2*d));
+      } else { u1=0; u2=0; }
+      var ac=ang(c2,c1),ms=Math.acos((r1-r2)/d);
+      var a1=ac+u1+(ms-u1)*v,a2=ac-u1-(ms-u1)*v;
+      var a3=ac+Math.PI-u2-(Math.PI-u2-ms)*v,a4=ac-Math.PI+u2+(Math.PI-u2-ms)*v;
+      var p1=vec(c1,a1,r1),p2=vec(c1,a2,r1),p3=vec(c2,a3,r2),p4=vec(c2,a4,r2);
+      var tr=r1+r2,d2b=Math.min(v*hs,dist(p1,p3)/tr),d2=d2b*Math.min(1,(d*2)/(r1+r2));
+      var hr1=r1*d2,hr2=r2*d2;
+      var h1=vec(p1,a1-HP,hr1),h2=vec(p2,a2+HP,hr1),h3=vec(p3,a3+HP,hr2),h4=vec(p4,a4-HP,hr2);
+      var f=function(p){return p[0].toFixed(2)+','+p[1].toFixed(2);};
+      return ['M',f(p1),'C',f(h1),f(h3),f(p3),'A',r2,r2,0,d>r1?1:0,0,f(p4),'C',f(h4),f(h2),f(p2)].join(' ');
+    }
+
+    var svg=document.getElementById('flBalls'),
+        labels=document.getElementById('flLabels'),
+        menu=document.getElementById('flMenu');
+    if(!svg||!labels||!menu) return;
+    var R=HEIGHT/2,PAD=R+4,cy;
+    var curGaps=[],targetGaps=[];
+
+    function computeTargets(){
+      var t=[];
+      for(var i=0;i<ITEMS.length-1;i++)
+        t.push((i===ACTIVE-1||i===ACTIVE)?ACTIVE_GAP:BASE_GAP);
+      return t;
+    }
+
+    function render(gaps){
+      var x=PAD,rects=[];
+      ITEMS.forEach(function(it){
+        rects.push({x:x,w:it.w,it:it});
+        x+=it.w+(gaps[rects.length-1]!==undefined?gaps[rects.length-1]:0);
+      });
+      var totalW=x+PAD,totalH=HEIGHT+PAD*2;
+      cy=PAD+R;
+      svg.setAttribute('width',totalW);svg.setAttribute('height',totalH);
+      svg.setAttribute('viewBox','0 0 '+totalW+' '+totalH);
+      menu.style.width=totalW+'px';menu.style.height=totalH+'px';
+
+      var conn='';
+      for(var i=0;i<rects.length-1;i++){
+        var lc=[rects[i].x+rects[i].w-R,cy],rc=[rects[i+1].x+R,cy];
+        var bp=metaball(R,R,lc,rc,HANDLE,V);
+        if(bp) conn+='<path d="'+bp+'" fill="'+PILL_FILL+'"/>';
+      }
+      var caps='';
+      rects.forEach(function(r){
+        caps+='<rect x="'+r.x+'" y="'+PAD+'" width="'+r.w+'" height="'+HEIGHT+'" rx="'+CORNER+'" ry="'+CORNER+'" fill="'+PILL_FILL+'"/>';
+      });
+      svg.innerHTML=conn+caps;
+
+      if(!labels.childElementCount){
+        var html='';
+        rects.forEach(function(r,i){
+          html+='<a href="'+r.it.href+'" data-i="'+i+'" style="left:'+r.x+'px;width:'+r.w+'px;">'+r.it.label+'</a>';
+        });
+        labels.innerHTML=html;
+      } else {
+        labels.querySelectorAll('a').forEach(function(a,i){
+          a.style.left=rects[i].x+'px';a.style.width=rects[i].w+'px';
+        });
+      }
+    }
+
+    function animate(){
+      var moving=false;
+      for(var i=0;i<curGaps.length;i++){
+        var diff=targetGaps[i]-curGaps[i];
+        if(Math.abs(diff)>0.3){curGaps[i]+=diff*0.18;moving=true;}
+        else curGaps[i]=targetGaps[i];
+      }
+      render(curGaps);
+      if(moving) requestAnimationFrame(animate);
+    }
+
+    for(var i=0;i<ITEMS.length-1;i++) curGaps.push(BASE_GAP);
+    targetGaps=computeTargets();
+    render(curGaps);
+    requestAnimationFrame(animate);
+  })();
+
+  // Mobile hamburger menu — toggle overlay, scroll-lock, ESC close, link close
+  (() => {
+    const hamb  = document.getElementById('navHamburger');
+    const menu  = document.getElementById('navMenu');
+    const close = document.getElementById('navClose');
+    if (!hamb || !menu || !close) return;
+    let lastFocus: HTMLElement | null = null;
+    const open = () => {
+      lastFocus = document.activeElement as HTMLElement | null;
+      menu.setAttribute('aria-hidden','false');
+      hamb.setAttribute('aria-expanded','true');
+      document.body.classList.add('is-menu-open');
+      close.focus();
+    };
+    const shut = () => {
+      menu.setAttribute('aria-hidden','true');
+      hamb.setAttribute('aria-expanded','false');
+      document.body.classList.remove('is-menu-open');
+      if (lastFocus) lastFocus.focus();
+    };
+    hamb.addEventListener('click', open);
+    close.addEventListener('click', shut);
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', shut));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.getAttribute('aria-hidden') === 'false') shut();
+    });
+  })();
+</script>
+
+</body>
+</html>
