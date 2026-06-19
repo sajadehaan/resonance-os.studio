@@ -19,7 +19,7 @@ import MetaballButton from '../components/MetaballButton.astro';
       <span class="diag-line">They don't recognize</span>
       <span class="diag-line">you online.</span>
     </h1>
-    <p class="hero-sub r" data-d="1">A brand identity studio for boutique movement and wellness operators. We close the gap between who you are when you teach and how you come across on a screen.</p>
+    <p class="hero-sub r" data-d="1" data-wordfill>A brand identity studio for boutique movement and wellness operators. We close the gap between who you are when you teach and how you come across on a screen.</p>
     <div class="hero-ctas r" data-d="2">
       <MetaballButton href="/id" label="Start your ID — €247" />
       <MetaballButton href="/site" variant="ghost" label="Explore Resonance.SITE" />
@@ -67,7 +67,7 @@ import MetaballButton from '../components/MetaballButton.astro';
     <span class="diag-line">doesn't survive</span>
     <span class="diag-line">the trip to your website.</span>
   </h2>
-  <p class="body-lg gap-body r" data-d="2">The brand lives in how you teach, what you notice, the way you set up a room. It lives in your voice on a Sunday morning when you talk about it. Your Instagram already carries some of it — it looks five times better than your website, and you know it. The website is the version you wrote in an evening, between sessions, on a template that wasn't built for you. That's the gap. We rebuild the website from the brand — not the other way around.</p>
+  <p class="body-lg gap-body r" data-d="2" data-wordfill>The brand lives in how you teach, what you notice, the way you set up a room. It lives in your voice on a Sunday morning when you talk about it. Your Instagram already carries some of it — it looks five times better than your website, and you know it. The website is the version you wrote in an evening, between sessions, on a template that wasn't built for you. That's the gap. We rebuild the website from the brand — not the other way around.</p>
 </section>
 
 
@@ -407,4 +407,11 @@ import MetaballButton from '../components/MetaballButton.astro';
       });
     }
   })();
+</script>
+
+<script>
+  import { initWordFill, initParallax, initPinnedTabs } from '../lib/motion';
+  const start = () => { initWordFill(); initParallax(); initPinnedTabs(); };
+  if (document.readyState !== 'loading') start();
+  else document.addEventListener('DOMContentLoaded', start);
 </script>

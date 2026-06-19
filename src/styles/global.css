@@ -923,3 +923,23 @@
       .nav-overlay { transition: none; }
       .nav-overlay-arrow { transition: none; }
     }
+
+    /* ── WORD-FILL REVEAL ── */
+    [data-wordfill] { color: var(--ink-m); }
+    .panel--dark [data-wordfill] { color: var(--on-dark-m); }
+    @media (prefers-reduced-motion: reduce) {
+      [data-wordfill] { color: var(--ink) !important; }
+      .panel--dark [data-wordfill] { color: var(--on-dark) !important; }
+    }
+
+    /* ── PILL-TAG EYEBROWS (home panels only) ── */
+    .panel-stack .lbl {
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      background: var(--accent-s);
+      color: var(--accent);
+    }
+    .panel-stack .panel--dark .lbl {
+      background: rgba(244,242,238,0.08);
+      color: var(--on-dark-m);
+    }
