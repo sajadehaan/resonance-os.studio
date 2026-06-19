@@ -990,3 +990,16 @@
       /* on mobile each tab is just a label; panels stack below */
       .ptabs-tablist { display: none; }
     }
+
+    /* ── PROJECTS ACCORDION (fixaplan restyle) ── */
+    #projects .project-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2.5rem; }
+    #projects .project-accordion, #projects .project-row--ph {
+      background: var(--bg-alt); border: 1px solid var(--rule); border-radius: var(--rad);
+      transition: border-color .4s ease-out, background .4s ease-out;
+    }
+    #projects .project-row { border-bottom: none; padding: 1.25rem 1.5rem; }
+    #projects .project-accordion:hover { border-color: rgba(247,91,29,0.30); }
+    #projects .project-accordion[open] { background: var(--bg); border-color: rgba(247,91,29,0.30); }
+    #projects .project-list > :last-child .project-row,
+    #projects .project-list > .project-row:last-child { border-bottom: none; }
+    #projects .project-case { padding: 0 1.5rem 1.75rem; }
