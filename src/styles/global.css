@@ -28,11 +28,40 @@
       --rad:     12px;   /* outer container radius */
       --rad-btn: 10px;   /* button + nav pill radius */
       --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+      /* ── fixaplan restyle additions ── */
+      --ink-panel:   #1a1a1a;                  /* warm-dark band background */
+      --ink-panel-2: #222222;                  /* raised surface on dark */
+      --on-dark:     #f4f2ee;                  /* primary text on dark */
+      --on-dark-m:   rgba(244, 242, 238, 0.55);/* muted text on dark */
+      --rad-panel:   clamp(1.5rem, 4vw, 2.5rem);/* stacked-panel top radius */
     }
 
     /* ── LAYOUT ──────────────────────────────────── */
     .s       { padding: var(--vp) var(--sp); }
     .s--alt  { background: var(--bg-alt); }
+
+    /* ── STACKED ROUNDED PANELS (fixaplan rhythm) ── */
+    .panel-stack { position: relative; }
+    .panel {
+      position: relative;
+      background: var(--bg);
+      border-radius: var(--rad-panel) var(--rad-panel) 0 0;
+      margin-top: calc(var(--rad-panel) * -1);
+      /* each panel sits above the previous so its rounded top overlaps it */
+      box-shadow: 0 -1px 0 rgba(34,34,34,0.04);
+    }
+    .panel:first-child { margin-top: 0; border-radius: 0; }
+    .panel--alt  { background: var(--bg-alt); }
+    .panel--dark {
+      background: var(--ink-panel);
+      color: var(--on-dark);
+      box-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+    }
+    .panel--dark .lbl,
+    .panel--dark .body, .panel--dark .body-lg { color: var(--on-dark-m); }
+    .panel--dark .h2, .panel--dark .diag-h { color: var(--on-dark); }
+    /* z-index is assigned inline per panel in index.astro so later panels stack on top */
 
     /* ── NAV ─────────────────────────────────────── */
     .nav {
