@@ -1003,3 +1003,13 @@
     #projects .project-list > :last-child .project-row,
     #projects .project-list > .project-row:last-child { border-bottom: none; }
     #projects .project-case { padding: 0 1.5rem 1.75rem; }
+
+    /* ── THE STUDIO (fixaplan restyle) ── */
+    #studio .studio-av {
+      aspect-ratio: 4 / 5; border-radius: var(--rad);
+      background: linear-gradient(160deg, var(--bg) 0%, var(--bg-alt) 100%);
+      border: 1px solid var(--rule);
+      box-shadow: 0 24px 60px -36px rgba(34,34,34,0.30);
+      display: grid; place-items: end start; padding: 1.25rem;
+    }
+    #studio .studio-av-lbl { font-family: var(--fm); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-m); }
