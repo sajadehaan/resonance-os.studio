@@ -11,8 +11,15 @@ import MetaballButton from '../components/MetaballButton.astro';
 <!-- ── 01 HERO ───────────────────────────────────── -->
 <section class="s-hero panel" style="z-index:1">
 
+  <!-- parallax media layer: photo if supplied, else Spline over gradient -->
+  <div class="hero-media" data-parallax aria-hidden="true">
+    <div class="hero-photo"></div>
+    <div class="spline-wrap">
+      <spline-viewer url="https://prod.spline.design/SSUb1QPOv-tdYAa2/scene.splinecode" loading="lazy"></spline-viewer>
+    </div>
+  </div>
+
   <div class="hero-body">
-    <p class="hero-eyebrow r">// RESONANCE.OS — BRAND IDENTITY FOR MOVEMENT &amp; WELLNESS</p>
     <h1 class="hero-h1 diag-h">
       <span class="diag-line">Clients meet you</span>
       <span class="diag-line">in person.</span>
@@ -20,15 +27,15 @@ import MetaballButton from '../components/MetaballButton.astro';
       <span class="diag-line">you online.</span>
     </h1>
     <p class="hero-sub r" data-d="1" data-wordfill>A brand identity studio for boutique movement and wellness operators. We close the gap between who you are when you teach and how you come across on a screen.</p>
-    <div class="hero-ctas r" data-d="2">
+  </div>
+
+  <!-- fixaplan-style bottom bar: eyebrow/tagline + CTAs -->
+  <div class="hero-bottombar r" data-d="2">
+    <p class="hero-eyebrow r">// RESONANCE.OS — BRAND IDENTITY FOR MOVEMENT &amp; WELLNESS</p>
+    <div class="hero-ctas">
       <MetaballButton href="/id" label="Start your ID — €247" />
       <MetaballButton href="/site" variant="ghost" label="Explore Resonance.SITE" />
     </div>
-  </div>
-
-  <!-- Spline logo animation -->
-  <div class="spline-wrap">
-    <spline-viewer url="https://prod.spline.design/SSUb1QPOv-tdYAa2/scene.splinecode" loading="lazy"></spline-viewer>
   </div>
 
   <!-- Brand dashboard preview slides in below -->

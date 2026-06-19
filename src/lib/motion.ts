@@ -27,5 +27,14 @@ export function initWordFill() {
   });
 }
 
-export function initParallax() { /* Task 4 */ }
+export function initParallax() {
+  if (reduced()) return;
+  document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {
+    gsap.to(el, {
+      yPercent: 18,
+      ease: 'none',
+      scrollTrigger: { trigger: el.closest('.s-hero') || el, start: 'top top', end: 'bottom top', scrub: true },
+    });
+  });
+}
 export function initPinnedTabs() { /* Task 5 */ }

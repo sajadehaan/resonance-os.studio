@@ -943,3 +943,18 @@
       background: rgba(244,242,238,0.08);
       color: var(--on-dark-m);
     }
+
+    /* ── HERO RESTYLE (fixaplan parallax + bottom bar) ── */
+    .s-hero { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: clamp(5rem,10vw,8rem) var(--sp) 0; }
+    .hero-media { position: absolute; inset: -10% 0 0 0; z-index: 0; pointer-events: none; }
+    .hero-photo { position: absolute; inset: 0; background: var(--photo, none) center/cover no-repeat; }
+    .s-hero .spline-wrap { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.9; }
+    .s-hero .hero-body, .s-hero .hero-bottombar, .s-hero .vault-card { position: relative; z-index: 2; }
+    .hero-bottombar {
+      display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+      flex-wrap: wrap; margin-top: auto; padding: 1.5rem 0 2rem;
+      border-top: 1px solid var(--rule);
+    }
+    @media (max-width: 760px) {
+      .hero-bottombar { flex-direction: column; align-items: flex-start; }
+    }
