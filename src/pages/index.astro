@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import MetaballButton from '../components/MetaballButton.astro';
+import PinnedTabs from '../components/PinnedTabs.astro';
 ---
 <Base
   description="A brand identity studio for boutique movement and wellness operators — closing the gap between who you are when you teach and how you look online."
@@ -87,38 +88,7 @@ import MetaballButton from '../components/MetaballButton.astro';
     <span class="diag-line">you've been quoted by.</span>
   </h2>
 
-  <div class="editorial-list">
-    <div class="editorial-item r" data-d="1">
-      <span class="editorial-n">01</span>
-      <div class="editorial-body">
-        <p class="editorial-h diag-h">
-          <span class="diag-line">Built around recognition,</span>
-          <span class="diag-line">not deliverables.</span>
-        </p>
-        <p class="editorial-p">Most studios sell you a logo, a palette, and a 40-page guide. We sell the moment you read your own brand back and think <em style="font-style:normal;color:var(--ink)">yes, that's me</em>. The palette, the tagline, the website — those are just the proof.</p>
-      </div>
-    </div>
-    <div class="editorial-item r" data-d="2">
-      <span class="editorial-n">02</span>
-      <div class="editorial-body">
-        <p class="editorial-h diag-h">
-          <span class="diag-line">Built to be</span>
-          <span class="diag-line">useful in 30 seconds.</span>
-        </p>
-        <p class="editorial-p">Discovery, workshops, presentations, revisions. Most agencies use the same six weeks we use to deliver the entire Resonance.ID. You answer 12 questions. Your dashboard is generated. You read it the same evening.</p>
-      </div>
-    </div>
-    <div class="editorial-item r" data-d="3">
-      <span class="editorial-n">03</span>
-      <div class="editorial-body">
-        <p class="editorial-h diag-h">
-          <span class="diag-line">Built for one</span>
-          <span class="diag-line">specific market.</span>
-        </p>
-        <p class="editorial-p">We do not work with fintech founders. We do not work with B2B SaaS. We work with people who teach movement. The intake is tuned for it. The voice rules are tuned for it. The blueprint is tuned for it. That's why it lands.</p>
-      </div>
-    </div>
-  </div>
+  <PinnedTabs />
 </section>
 
 

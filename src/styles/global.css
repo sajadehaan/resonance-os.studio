@@ -958,3 +958,35 @@
     @media (max-width: 760px) {
       .hero-bottombar { flex-direction: column; align-items: flex-start; }
     }
+
+    /* ── PINNED SCROLL-TABS (Why) ── */
+    .ptabs { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(2rem,5vw,5rem); margin-top: 3rem; align-items: start; }
+    .ptabs-tablist { display: flex; flex-direction: column; gap: 0.5rem; }
+    .ptabs-tab {
+      display: flex; gap: 0.875rem; align-items: baseline; padding: 0.875rem 1.125rem;
+      border-radius: var(--rad-btn); cursor: default;
+      color: var(--on-dark-m); opacity: 0.5;
+      transition: opacity .4s var(--ease-expo), background .4s var(--ease-expo), color .4s var(--ease-expo);
+    }
+    .ptabs-tab.is-active { opacity: 1; color: var(--on-dark); background: var(--ink-panel-2); }
+    .ptabs-tab-n { font-family: var(--fm); font-size: 0.625rem; color: var(--accent); }
+    .ptabs-tab-ttl { font-family: var(--fu); font-weight: 600; font-size: clamp(1rem,1.6vw,1.25rem); letter-spacing: -0.02em; }
+    .ptabs-stage { position: relative; min-height: 18rem; }
+    .ptabs-panel {
+      position: absolute; inset: 0; opacity: 0; transform: translateY(12px);
+      background: var(--ink-panel-2); border: 1px solid rgba(244,242,238,0.08);
+      border-radius: var(--rad); padding: clamp(1.5rem,3vw,2.25rem);
+      transition: opacity .5s var(--ease-expo), transform .5s var(--ease-expo);
+      pointer-events: none;
+    }
+    .ptabs-panel.is-active { opacity: 1; transform: none; pointer-events: auto; }
+    .ptabs-panel-n { font-family: var(--fm); font-size: 0.625rem; color: var(--accent); }
+    .ptabs-panel-ttl { font-family: var(--fu); font-weight: 700; font-size: clamp(1.35rem,2.4vw,2rem); letter-spacing: -0.03em; color: var(--on-dark); margin: 0.75rem 0 1rem; line-height: 1.05; }
+    .ptabs-panel-body { font-family: var(--fu); font-size: 1rem; line-height: 1.65; color: var(--on-dark-m); max-width: 42ch; }
+    @media (max-width: 900px) {
+      .ptabs { grid-template-columns: 1fr; }
+      .ptabs-stage { min-height: 0; display: flex; flex-direction: column; gap: 1rem; }
+      .ptabs-panel { position: relative; inset: auto; opacity: 1; transform: none; pointer-events: auto; }
+      /* on mobile each tab is just a label; panels stack below */
+      .ptabs-tablist { display: none; }
+    }

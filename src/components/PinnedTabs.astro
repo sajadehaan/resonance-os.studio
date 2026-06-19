@@ -1,0 +1,38 @@
+---
+const reasons = [
+  {
+    n: '01',
+    title: 'Built around recognition, not deliverables.',
+    body: 'Most studios sell you a logo, a palette, and a 40-page guide. We sell the moment you read your own brand back and think <em style="font-style:normal;color:var(--on-dark)">yes, that\'s me</em>. The palette, the tagline, the website — those are just the proof.',
+  },
+  {
+    n: '02',
+    title: 'Built to be useful in 30 seconds.',
+    body: 'Discovery, workshops, presentations, revisions. Most agencies use the same six weeks we use to deliver the entire Resonance.ID. You answer 12 questions. Your dashboard is generated. You read it the same evening.',
+  },
+  {
+    n: '03',
+    title: 'Built for one specific market.',
+    body: 'We do not work with fintech founders. We do not work with B2B SaaS. We work with people who teach movement. The intake is tuned for it. The voice rules are tuned for it. The blueprint is tuned for it. That\'s why it lands.',
+  },
+];
+---
+<div class="ptabs" data-ptabs>
+  <ol class="ptabs-tablist" role="tablist" aria-label="Three reasons">
+    {reasons.map((r, i) => (
+      <li class={`ptabs-tab${i === 0 ? ' is-active' : ''}`} data-tab={i}>
+        <span class="ptabs-tab-n">{r.n}</span>
+        <span class="ptabs-tab-ttl">{r.title}</span>
+      </li>
+    ))}
+  </ol>
+  <div class="ptabs-stage">
+    {reasons.map((r, i) => (
+      <article class={`ptabs-panel${i === 0 ? ' is-active' : ''}`} data-panel={i}>
+        <span class="ptabs-panel-n">{r.n}</span>
+        <p class="ptabs-panel-ttl">{r.title}</p>
+        <p class="ptabs-panel-body" set:html={r.body} />
+      </article>
+    ))}
+  </div>
+</div>

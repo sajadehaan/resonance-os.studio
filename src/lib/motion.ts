@@ -37,4 +37,31 @@ export function initParallax() {
     });
   });
 }
-export function initPinnedTabs() { /* Task 5 */ }
+export function initPinnedTabs() {
+  document.querySelectorAll<HTMLElement>('[data-ptabs]').forEach((root) => {
+    const tabs   = root.querySelectorAll<HTMLElement>('.ptabs-tab');
+    const panels = root.querySelectorAll<HTMLElement>('.ptabs-panel');
+    const n = panels.length;
+    if (!n) return;
+
+    const setActive = (idx: number) => {
+      tabs.forEach((t, i) => t.classList.toggle('is-active', i === idx));
+      panels.forEach((p, i) => p.classList.toggle('is-active', i === idx));
+    };
+
+    const noPin = reduced() || window.matchMedia('(max-width: 900px)').matches;
+    if (noPin) { tabs.forEach(t => t.classList.add('is-active')); panels.forEach(p => p.classList.add('is-active')); return; }
+
+    ScrollTrigger.create({
+      trigger: root,
+      start: 'center center',
+      end: () => `+=${n * 100}%`,
+      pin: true,
+      scrub: true,
+      onUpdate: (self) => {
+        const idx = Math.min(n - 1, Math.floor(self.progress * n));
+        setActive(idx);
+      },
+    });
+  });
+}
