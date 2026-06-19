@@ -6,8 +6,10 @@ import MetaballButton from '../components/MetaballButton.astro';
   description="A brand identity studio for boutique movement and wellness operators — closing the gap between who you are when you teach and how you look online."
 >
 
+<div class="panel-stack">
+
 <!-- ── 01 HERO ───────────────────────────────────── -->
-<section class="s-hero">
+<section class="s-hero panel" style="z-index:1">
 
   <div class="hero-body">
     <p class="hero-eyebrow r">// RESONANCE.OS — BRAND IDENTITY FOR MOVEMENT &amp; WELLNESS</p>
@@ -57,16 +59,8 @@ import MetaballButton from '../components/MetaballButton.astro';
 </section>
 
 
-<!-- ── LOGO SEPARATOR ────────────────────────────── -->
-<div class="logo-sep" aria-hidden="true">
-  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <use href="#logo-mark"/>
-  </svg>
-</div>
-
-
 <!-- ── 02 THE GAP ──────────────────────────────────── -->
-<section class="s" id="gap">
+<section class="s panel panel--alt" id="gap" style="z-index:2">
   <span class="lbl r">// THE GAP</span>
   <h2 class="h2 diag-h r" data-d="1">
     <span class="diag-line">The room you hold</span>
@@ -77,16 +71,8 @@ import MetaballButton from '../components/MetaballButton.astro';
 </section>
 
 
-<!-- ── LOGO SEPARATOR ────────────────────────────── -->
-<div class="logo-sep" aria-hidden="true">
-  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <use href="#logo-mark"/>
-  </svg>
-</div>
-
-
 <!-- ── 03 WHY — FLOEMA EDITORIAL LIST ─────────────── -->
-<section class="s" id="why">
+<section class="s panel panel--dark" id="why" style="z-index:3">
   <span class="lbl r">// A DIFFERENT KIND OF STUDIO</span>
   <h2 class="h2 diag-h r" data-d="1">
     <span class="diag-line">Three reasons</span>
@@ -130,7 +116,7 @@ import MetaballButton from '../components/MetaballButton.astro';
 
 
 <!-- ── 04 TWO WAYS IN — PRODUCT OVERVIEW ───────────── -->
-<section class="s" id="products" style="background:var(--bg-alt)">
+<section class="s panel panel--alt" id="products" style="z-index:4">
   <span class="lbl r">// TWO WAYS IN</span>
   <h2 class="h2 diag-h r" data-d="1">
     <span class="diag-line">Start with the brand.</span>
@@ -158,7 +144,7 @@ import MetaballButton from '../components/MetaballButton.astro';
 
 
 <!-- ── 05 PROJECTS ─────────────────────────────────── -->
-<section class="s" id="projects">
+<section class="s panel" id="projects" style="z-index:5">
   <span class="lbl r">// PROJECTS</span>
   <div class="project-list">
     <details class="project-accordion r" data-d="1">
@@ -233,16 +219,8 @@ import MetaballButton from '../components/MetaballButton.astro';
 </section>
 
 
-<!-- ── LOGO SEPARATOR ────────────────────────────── -->
-<div class="logo-sep" aria-hidden="true">
-  <svg class="logo-sep-mark" viewBox="0 0 550 550" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <use href="#logo-mark"/>
-  </svg>
-</div>
-
-
 <!-- ── 06 THE STUDIO ───────────────────────────────── -->
-<section class="s" id="studio">
+<section class="s panel panel--alt" id="studio" style="z-index:6">
   <span class="lbl r">// THE STUDIO</span>
   <h2 class="h2 diag-h r" data-d="1" style="margin-bottom:2rem">
     <span class="diag-line">One person,</span>
@@ -264,7 +242,7 @@ import MetaballButton from '../components/MetaballButton.astro';
 
 
 <!-- ── 07 TESTIMONIALS ─────────────────────────────── -->
-<section class="s" id="testimonials" style="padding-bottom:0; background:var(--bg-alt)">
+<section class="s panel" id="testimonials" style="z-index:7; padding-bottom:0">
   <span class="lbl r">// TESTIMONIALS</span>
   <h2 class="h2 diag-h r" data-d="1">
     <span class="diag-line">What people said</span>
@@ -352,6 +330,8 @@ import MetaballButton from '../components/MetaballButton.astro';
     </div>
   </div>
 </section>
+
+</div><!-- /.panel-stack -->
 
 </Base>
 
