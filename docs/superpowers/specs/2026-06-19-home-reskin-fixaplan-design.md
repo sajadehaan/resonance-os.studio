@@ -3,7 +3,7 @@
 **Date:** 2026-06-19
 **Author:** Saja Dehaan + Claude
 **Status:** Design — awaiting review (rev 2)
-**Files touched:** `src/pages/index.astro` (restyle in place), `src/styles/global.css` (new primitives + tokens), `src/layouts/Base.astro` (pill nav + dark footer), new partials under `src/components/`.
+**Files touched:** `src/pages/index.astro` (restyle in place), `src/styles/global.css` (new primitives + tokens), `src/layouts/Base.astro` (dark footer only), new partials under `src/components/`.
 
 ---
 
@@ -36,20 +36,18 @@ Reference: a 22s screen recording of fixaplan.com, torn down frame-by-frame.
 
 ---
 
-## 2. Global shell — three new primitives
+## 2. Global shell — two new primitives
 
 Shared mechanisms the sections compose from. Each is independently understandable and testable.
 
-### 2.1 Floating pill nav
-- Restyle the current sticky `.nav` into a centered white pill (`--white`, `--rad-btn`, soft shadow) holding the `Resonance.OS` wordmark + existing metaball menu.
-- `position: fixed; top: clamp(0.75rem, 2vw, 1.25rem)`, horizontally centered, `z-index: 200`. No content change — same logo + same menu links.
+> **Nav: unchanged.** The existing sticky `.nav` (logo + metaball menu) stays exactly as it is today — no pill, no relayout. Panels scroll under it as now.
 
-### 2.2 Stacked rounded panels
+### 2.1 Stacked rounded panels
 - Each existing section becomes a `.panel` with a large top radius (`--rad-panel`) that slides up over the previous panel on scroll.
 - Pure layout: increasing `z-index` per panel + `margin-top` overlap + per-panel background. Backgrounds alternate `--bg` / `--bg-alt`; the Why (pinned-tabs) section and the footer use `--ink-panel`.
 - The existing `.logo-sep` separators are folded into the panel transitions (kept as a faint accent at panel seams, not removed).
 
-### 2.3 Word-fill scroll reveal
+### 2.2 Word-fill scroll reveal
 - Existing body/statement copy reveals word-by-word from `--ink-m` → `--ink` as the section crosses the viewport (fixaplan's signature fill). Applied to existing paragraphs only — no new text.
 - GSAP ScrollTrigger (already a dependency) drives per-word color over a scrub range; words wrapped in `<span>` at render.
 - Composes with the existing `diag-line` stagger (kept for stacked display headlines).
@@ -133,7 +131,6 @@ Existing tokens reused as-is: `--bg`, `--bg-alt`, `--ink`, `--ink-m`, `--accent`
 **Reused (unchanged content/behavior):** all section copy, `MetaballButton` + metaball menu, `.vault-card`, conversation/testimonial cards, `.project-accordion`, `diag-line` headline stagger, monospace eyebrows, Spline mark, `.r`/`data-d` reveal convention, footer links.
 
 **New components (proposed files):**
-- `src/components/PillNav.astro` — floating pill nav (wraps existing menu).
 - `src/components/PinnedTabs.astro` — pinned scroll-tabs controller, fed the three existing reasons as props.
 - Section markup stays inline in `index.astro` (matching the page's current inline-section + scoped-`<style>`/`<script>` pattern); shared primitives live in `global.css`.
 
@@ -147,7 +144,7 @@ Existing tokens reused as-is: `--bg`, `--bg-alt`, `--ink`, `--ink-m`, `--accent`
 
 ## 8. Acceptance criteria
 1. Same 7 sections in the same order, all copy verbatim — diff shows styling/markup-structure changes only, no wording changes.
-2. Stacked-panel rhythm with two warm-dark bands (Why + footer); pill nav floats over all panels.
+2. Stacked-panel rhythm with two warm-dark bands (Why + footer); existing nav unchanged.
 3. Why section pins and advances through the three existing reasons on desktop; degrades to a vertical stack on mobile / reduced-motion.
 4. Word-fill, parallax, and stagger run on desktop and are disabled under `prefers-reduced-motion: reduce`.
 5. Hero renders correctly with no photo (fallback) and with a photo (when supplied).
