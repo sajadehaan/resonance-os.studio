@@ -1013,3 +1013,10 @@
       display: grid; place-items: end start; padding: 1.25rem;
     }
     #studio .studio-av-lbl { font-family: var(--fm); font-size: 0.625rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-m); }
+
+    /* ── TESTIMONIALS (fixaplan restyle) ── */
+    #testimonials .conv-card {
+      border-radius: var(--rad);
+      border: 1px solid var(--rule);
+      background: var(--bg);
+    }
