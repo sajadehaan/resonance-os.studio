@@ -292,32 +292,6 @@
     .gap-h2 { max-width: 22ch; margin-bottom: 2rem; }
     .gap-body { max-width: 64ch; }
 
-    /* ── 03 WHY — FLOEMA EDITORIAL LIST ─────────── */
-    .editorial-list { margin-top: 3rem; }
-    .editorial-item {
-      display: grid;
-      grid-template-columns: 2.5rem 1fr;
-      gap: 0 2.5rem;
-      padding: 2.75rem 0;
-      border-top: 1px solid var(--rule);
-    }
-    .editorial-item:last-child { border-bottom: 1px solid var(--rule); }
-    .editorial-n {
-      font-family: var(--fm); font-size: 0.6rem; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--accent); padding-top: 0.55rem;
-    }
-    .editorial-body {}
-    .editorial-h {
-      font-family: var(--fu);
-      font-size: clamp(1.25rem, 2.2vw, 2.25rem);
-      font-weight: 700; line-height: 1.0; letter-spacing: -0.04em;
-      color: var(--ink); margin-bottom: 0.875rem;
-    }
-    .editorial-p {
-      font-family: var(--fu); font-size: 1rem;
-      line-height: 1.65; color: var(--ink-m); max-width: 56ch;
-    }
-
     /* ── 04 RESONANCE.ID ─────────────────────────── */
     .prod-grid {
       display: grid; grid-template-columns: 1fr 1fr;
@@ -893,7 +867,6 @@
       .studio-grid  { grid-template-columns: 1fr; }
       .faq-grid     { grid-template-columns: 1fr; gap: 0; }
       .footer-bar   { grid-template-columns: 1fr; gap: 1.5rem; }
-      .editorial-item { grid-template-columns: 2rem 1fr; gap: 0 1.5rem; }
       .s-doc          { grid-template-columns: 1fr; }
       .doc-sidebar    { display: none; }
     }
@@ -945,11 +918,11 @@
     }
 
     /* ── HERO RESTYLE (fixaplan parallax + bottom bar) ── */
-    .s-hero { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: clamp(5rem,10vw,8rem) var(--sp) 0; }
+    .panel-stack .s-hero { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: clamp(5rem,10vw,8rem) var(--sp) 0; }
     .hero-media { position: absolute; inset: -10% 0 0 0; z-index: 0; pointer-events: none; }
     .hero-photo { position: absolute; inset: 0; background: var(--photo, none) center/cover no-repeat; }
-    .s-hero .spline-wrap { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.9; }
-    .s-hero .hero-body, .s-hero .hero-bottombar, .s-hero .vault-card { position: relative; z-index: 2; }
+    .panel-stack .s-hero .spline-wrap { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.9; }
+    .panel-stack .s-hero .hero-body, .panel-stack .s-hero .hero-bottombar, .panel-stack .s-hero .vault-card { position: relative; z-index: 2; }
     .hero-bottombar {
       display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
       flex-wrap: wrap; margin-top: auto; padding: 1.5rem 0 2rem;

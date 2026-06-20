@@ -18,7 +18,7 @@ const reasons = [
 ];
 ---
 <div class="ptabs" data-ptabs>
-  <ol class="ptabs-tablist" role="tablist" aria-label="Three reasons">
+  <ol class="ptabs-tablist" aria-label="Three reasons">
     {reasons.map((r, i) => (
       <li class={`ptabs-tab${i === 0 ? ' is-active' : ''}`} data-tab={i}>
         <span class="ptabs-tab-n">{r.n}</span>
