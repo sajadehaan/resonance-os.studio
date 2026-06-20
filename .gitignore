@@ -27,3 +27,6 @@ pnpm-debug.log*
 .claude/
 .agents/
 .playwright-cli/
+
+# ShipStudio metadata
+.shipstudio/
