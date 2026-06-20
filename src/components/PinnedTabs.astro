@@ -18,14 +18,13 @@ const reasons = [
 ];
 ---
 <div class="ptabs" data-ptabs>
-  <ol class="ptabs-tablist" aria-label="Three reasons">
-    {reasons.map((r, i) => (
-      <li class={`ptabs-tab${i === 0 ? ' is-active' : ''}`} data-tab={i}>
-        <span class="ptabs-tab-n">{r.n}</span>
-        <span class="ptabs-tab-ttl">{r.title}</span>
-      </li>
+  <div class="ptabs-rail" aria-hidden="true">
+    {reasons.map((_, i) => (
+      <span class={`ptabs-rail-seg${i === 0 ? ' is-active' : ''}`} data-seg={i}>
+        <span class="ptabs-rail-fill"></span>
+      </span>
     ))}
-  </ol>
+  </div>
   <div class="ptabs-stage">
     {reasons.map((r, i) => (
       <article class={`ptabs-panel${i === 0 ? ' is-active' : ''}`} data-panel={i}>

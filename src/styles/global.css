@@ -68,12 +68,12 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.25rem var(--sp);
       position: sticky; top: 0; z-index: 100;
-      background: var(--bg);
+      background: transparent;
     }
     .nav-logo {
-      display: flex; align-items: center; gap: 0.625rem;
-      font-family: var(--fu); font-size: 0.9375rem; font-weight: 500;
-      letter-spacing: -0.01em; color: var(--ink);
+      display: flex; align-items: center; gap: 0.2rem;
+      font-family: var(--fu); font-size: 1.0625rem; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--ink);
     }
     .nav-logo-mark { width: 24px; height: 24px; flex-shrink: 0; }
 
@@ -131,6 +131,15 @@
     .body {
       font-family: var(--fu); font-size: 1.0625rem;
       line-height: 1.65; color: var(--ink-m);
+    }
+
+    /* Heading → body breathing room. A large diagonal heading sitting
+       directly against its paragraph reads as cramped; give every
+       heading-then-body pairing the same rhythm grids already use (2.5rem). */
+    .diag-h + .body-lg, .diag-h + .body,
+    .h2 + .body-lg, .h2 + .body,
+    .hero-h1 + .body-lg, .hero-h1 + .body {
+      margin-top: clamp(1.75rem, 3vw, 2.5rem);
     }
 
     /* ── BUTTONS — SVG metaball two-piece: dark icon block + fill label ── */
@@ -510,7 +519,7 @@
     .vmod-sub { font-family: var(--fu); font-size: 0.8125rem; color: var(--ink-m); line-height: 1.5; }
 
     /* ── 10 STUDIO ───────────────────────────────── */
-    .studio-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 4rem; align-items: start; margin-top: 2rem; }
+    .studio-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 4rem; align-items: start; margin-top: 2.5rem; }
     .studio-copy { display: flex; flex-direction: column; gap: 1.25rem; }
     .studio-av {
       background: var(--bg-alt); border-radius: 16px; aspect-ratio: 3/4;
@@ -524,7 +533,7 @@
 
     /* ── 11 CONVERSATIONS ────────────────────────── */
     .conv-track-wrap {
-      margin-top: 2rem;
+      margin-top: 2.5rem;
       margin-inline: calc(-1 * var(--sp));
       padding-bottom: var(--vp); overflow: hidden;
       -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
@@ -573,7 +582,7 @@
     .conv-line::before { content: '· '; color: var(--accent); }
 
     /* ── 12 FAQ ──────────────────────────────────── */
-    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4rem; margin-top: 2rem; align-items: start; }
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4rem; margin-top: 2.5rem; align-items: start; }
     .faq-col { display: flex; flex-direction: column; }
     .faq-item { border-top: 1px solid var(--rule); }
     .faq-item:last-child { border-bottom: 1px solid var(--rule); }
@@ -604,7 +613,7 @@
 
     /* ── 13 FOOTER ───────────────────────────────── */
     .s-footer { padding: var(--vp) var(--sp); }
-    .footer-cta { padding-bottom: var(--vp); margin-bottom: var(--vp); border-bottom: 1px solid var(--rule); }
+    .footer-cta { padding-bottom: clamp(2.5rem, 5vw, 4.5rem); margin-bottom: clamp(2.5rem, 5vw, 4.5rem); border-bottom: 1px solid var(--rule); }
     .footer-big {
       font-family: var(--fu);
       font-size: clamp(2.75rem, 7vw, 8rem);
@@ -921,7 +930,8 @@
     .panel-stack .s-hero { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: clamp(5rem,10vw,8rem) var(--sp) 0; }
     .hero-media { position: absolute; inset: -10% 0 0 0; z-index: 0; pointer-events: none; }
     .hero-photo { position: absolute; inset: 0; background: var(--photo, none) center/cover no-repeat; }
-    .panel-stack .s-hero .spline-wrap { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.9; }
+    .panel-stack .s-hero .spline-wrap { position: absolute; inset: 0; height: auto; display: grid; place-items: start end; opacity: 0.9; overflow: visible; clip-path: none; padding: clamp(2rem, 6vh, 6rem) clamp(1rem, 5vw, 5rem) 0 0; }
+    .panel-stack .s-hero .spline-wrap spline-viewer { width: min(55vw, 760px); height: min(82vh, 820px); }
     .panel-stack .s-hero .hero-body, .panel-stack .s-hero .hero-bottombar, .panel-stack .s-hero .vault-card { position: relative; z-index: 2; }
     .hero-bottombar {
       display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
@@ -933,22 +943,32 @@
     }
 
     /* ── PINNED SCROLL-TABS (Why) ── */
-    .ptabs { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(2rem,5vw,5rem); margin-top: 3rem; align-items: start; }
-    .ptabs-tablist { display: flex; flex-direction: column; gap: 0.5rem; }
-    .ptabs-tab {
-      display: flex; gap: 0.875rem; align-items: baseline; padding: 0.875rem 1.125rem;
-      border-radius: var(--rad-btn); cursor: default;
-      color: var(--on-dark-m); opacity: 0.5;
-      transition: opacity .4s var(--ease-expo), background .4s var(--ease-expo), color .4s var(--ease-expo);
+    /* vertical rail + one active card; pinned scroll advances the cards at every width */
+    .ptabs { display: grid; grid-template-columns: auto minmax(0, 600px); gap: clamp(1.25rem,3vw,2rem); margin-top: 3rem; align-items: start; justify-content: start; }
+
+    /* vertical scroll-progress rail: dot = pending/passed card, filling bar = active */
+    .ptabs-rail {
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+      gap: 0.75rem; padding-top: 1rem; flex: 0 0 auto;
     }
-    .ptabs-tab.is-active { opacity: 1; color: var(--on-dark); background: var(--ink-panel-2); }
-    .ptabs-tab-n { font-family: var(--fm); font-size: 0.625rem; color: var(--accent); }
-    .ptabs-tab-ttl { font-family: var(--fu); font-weight: 600; font-size: clamp(1rem,1.6vw,1.25rem); letter-spacing: -0.02em; }
-    .ptabs-stage { position: relative; min-height: 18rem; }
+    .ptabs-rail-seg {
+      position: relative; flex: 0 0 auto; overflow: hidden;
+      width: 4px; height: 4px; border-radius: 999px;
+      background: rgba(244,242,238,0.16);
+      transition: height .5s var(--ease-expo), background .4s var(--ease-expo);
+    }
+    .ptabs-rail-seg.is-active { height: 60px; background: rgba(244,242,238,0.16); }
+    .ptabs-rail-fill {
+      position: absolute; inset: 0 0 auto 0; width: 100%; height: 0%;
+      background: var(--accent); border-radius: 999px;
+    }
+
+    /* all cards share one grid cell so the stage auto-sizes to the tallest card */
+    .ptabs-stage { display: grid; }
     .ptabs-panel {
-      position: absolute; inset: 0; opacity: 0; transform: translateY(12px);
+      grid-area: 1 / 1; opacity: 0; transform: translateY(12px);
       background: var(--ink-panel-2); border: 1px solid rgba(244,242,238,0.08);
-      border-radius: var(--rad); padding: clamp(1.5rem,3vw,2.25rem);
+      border-radius: var(--rad); padding: clamp(1.75rem,3.5vw,2.75rem);
       transition: opacity .5s var(--ease-expo), transform .5s var(--ease-expo);
       pointer-events: none;
     }
@@ -956,13 +976,15 @@
     .ptabs-panel-n { font-family: var(--fm); font-size: 0.625rem; color: var(--accent); }
     .ptabs-panel-ttl { font-family: var(--fu); font-weight: 700; font-size: clamp(1.35rem,2.4vw,2rem); letter-spacing: -0.03em; color: var(--on-dark); margin: 0.75rem 0 1rem; line-height: 1.05; }
     .ptabs-panel-body { font-family: var(--fu); font-size: 1rem; line-height: 1.65; color: var(--on-dark-m); max-width: 42ch; }
-    @media (max-width: 900px) {
-      .ptabs { grid-template-columns: 1fr; }
-      .ptabs-stage { min-height: 0; display: flex; flex-direction: column; gap: 1rem; }
-      .ptabs-panel { position: relative; inset: auto; opacity: 1; transform: none; pointer-events: auto; }
-      /* on mobile each tab is just a label; panels stack below */
-      .ptabs-tablist { display: none; }
+
+    @media (max-width: 640px) {
+      .ptabs { grid-template-columns: auto 1fr; gap: 1rem; }
     }
+
+    /* reduced-motion: stack the cards statically, no rail, no overlap */
+    .ptabs.is-static .ptabs-rail { display: none; }
+    .ptabs.is-static .ptabs-stage { display: block; }
+    .ptabs.is-static .ptabs-panel { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; margin-bottom: 1rem; }
 
     /* ── PROJECTS ACCORDION (fixaplan restyle) ── */
     #projects .project-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2.5rem; }

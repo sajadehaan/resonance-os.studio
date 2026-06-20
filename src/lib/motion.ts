@@ -39,28 +39,38 @@ export function initParallax() {
 }
 export function initPinnedTabs() {
   document.querySelectorAll<HTMLElement>('[data-ptabs]').forEach((root) => {
-    const tabs   = root.querySelectorAll<HTMLElement>('.ptabs-tab');
     const panels = root.querySelectorAll<HTMLElement>('.ptabs-panel');
+    const segs   = root.querySelectorAll<HTMLElement>('.ptabs-rail-seg');
     const n = panels.length;
     if (!n) return;
 
-    const setActive = (idx: number) => {
-      tabs.forEach((t, i) => t.classList.toggle('is-active', i === idx));
+    // Pin the whole heading + cards block so the heading stays static while
+    // the cards advance. Falls back to the cards container if no wrapper.
+    const pinEl = (root.closest<HTMLElement>('[data-ptabs-pin]')) || root;
+
+    const setActive = (idx: number, frac: number) => {
       panels.forEach((p, i) => p.classList.toggle('is-active', i === idx));
+      segs.forEach((s, i) => {
+        s.classList.toggle('is-active', i === idx);
+        const fill = s.querySelector<HTMLElement>('.ptabs-rail-fill');
+        if (fill) fill.style.height = i < idx ? '100%' : i === idx ? `${(frac * 100).toFixed(1)}%` : '0%';
+      });
     };
 
-    const noPin = reduced() || window.matchMedia('(max-width: 900px)').matches;
-    if (noPin) { tabs.forEach(t => t.classList.add('is-active')); panels.forEach(p => p.classList.add('is-active')); return; }
+    // Only reduced-motion opts out of the scroll animation; it runs at every width.
+    if (reduced()) { root.classList.add('is-static'); panels.forEach(p => p.classList.add('is-active')); return; }
 
     ScrollTrigger.create({
-      trigger: root,
+      trigger: pinEl,
       start: 'center center',
-      end: () => `+=${n * 100}%`,
-      pin: true,
+      end: () => `+=${n * 55}%`,
+      pin: pinEl,
       scrub: true,
       onUpdate: (self) => {
-        const idx = Math.min(n - 1, Math.floor(self.progress * n));
-        setActive(idx);
+        const raw = self.progress * n;
+        const idx = Math.min(n - 1, Math.floor(raw));
+        const frac = Math.min(1, Math.max(0, raw - idx));
+        setActive(idx, frac);
       },
     });
   });
